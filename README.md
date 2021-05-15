@@ -17,7 +17,7 @@ Over time I will be adding extra features to this project, listed below. I also 
 - [X] Extracting
 - [X] Create new diretories
 - [X] Filtering
-- [X] File viewer *if compatible with the browser
+- [X] File viewer   *if compatible with the browser
 - [ ] Rename files/directories
 - [ ] User auth  
 - [ ] HTTPS
@@ -45,6 +45,9 @@ cd server
 # install dependencies
 npm install
 
-# serve with nodemon at localhost:5000
+# run server
+node server.js
+
+# if you have nodemon installed globally
 npm run dev
 ```
