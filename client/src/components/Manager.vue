@@ -306,7 +306,7 @@
               style="overflow-y: scroll; border: 2px solid #e5e5e5; margin-top: 10px;"
             >
               <tbody>
-                <!-- FOLDERS - RIGHT HAND TABLE-------------------------------->
+                <!-- FOLDERS - RIGHT HAND TABLE--------------->
                 <tr
                   id="entries"
                   v-for="alias2 in files"
