@@ -2,7 +2,7 @@
 
 :rocket: [Demo](https://FlynnDerek.github.io)
 
-This project exists because I noticed there arent many file management solutions avaliable in Vue. So I decided to write my own! Vue-fs is meant to be a
+This project exists mostly as a challenge to myself! Vue-fs is meant to be a
 complete home file server and file management solution. The idea being you can run it on a Raspberry Pi, an old laptop or even a rack server. 
 Over time I will be adding extra features to this project, listed below. I also welcome collaboration, should any of you feel inclined :)
 
