@@ -1,0 +1,12 @@
+{
+	"recommendations": [
+		"msjsdiag.debugger-for-chrome",
+		"firefox-devtools.vscode-firefox-debug",
+		"humao.rest-client",
+		"eamodio.gitlens",
+		"pkief.material-icon-theme",
+		"coenraads.bracket-pair-colorizer-2",
+		"oouo-diogo-perdigao.docthis",
+		"dbaeumer.vscode-eslint"
+	]
+}
