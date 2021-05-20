@@ -4,10 +4,10 @@
   "description": "vue-fs backend",
   "main": "index.js",
   "scripts": {
-    "start": "set DEBUG=vue-fs:* && node .",
+    "start": "node .",
     "lint": "eslint --fix --ext .js,.jsx .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "set DEBUG=vue-fs:* && nodemon index.js"
+    "dev": "nodemon index.js"
   },
   "author": "Derek Flynn",
   "license": "MIT",
@@ -26,6 +26,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
+    "dotenv": "^9.0.2",
     "eslint": "^7.26.0",
     "eslint-plugin-vue": "^7.9.0"
   }
