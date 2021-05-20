@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const chalk = require("chalk");
 const mv = require("mv");
 const rimraf = require("rimraf");
 const archiver = require("archiver");
@@ -9,11 +8,12 @@ const extract = require("extract-zip");
 const DateTime = require("./Utilities/DateTime");
 const app = require("./Utilities/Server");
 const Path = require("./Utilities/Path");
+const Logger = require("./Utilities/Logger");
 
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-	console.log("Server running on port: " + port);
+	Logger.logSystem("Server running on port: " + port);
 });
 
 let my_path;
@@ -38,7 +38,7 @@ app.post("/upload", (req, res) => {
 
 	myFile.mv(`${folder_path + "/"}${myFile.name}`, (err) => {
 		if (err) {
-			console.log(err);
+			Logger.logError(err);
 			return res.status(500).send({ msg: "Error occured" });
 		}
 		return res.send({ name: myFile.name, path: `/${myFile.name}` });
@@ -89,13 +89,11 @@ app.post("/newFolder", (req, res) => {
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
 	}
-	console.log(
-		chalk.green(
-			"A new folder `" +
+	Logger.logEvent(
+		"A new folder `" +
 			req.body.folder_name +
 			"` was created on " +
-			DateTime.Now()
-		)
+			Date.Now()
 	);
 	return res.sendStatus(200);
 });
@@ -110,7 +108,7 @@ app.post("/sendZips", (req, res) => {
 // Download a file
 app.get("/download", (req, res) => {
 	const selectedPath = my_path;
-	console.log("Download: " + my_path);
+	Logger.logEvent("Download: " + my_path);
 	const file = __dirname + selectedPath.substring(1);
 	res.sendFile(file);
 });
@@ -126,9 +124,9 @@ app.post("/delete", (req, res) => {
 	
 	thePath.forEach((filepath) => {
 		rimraf(filepath, (err) => {
-			if (err) return console.log(err);
+			if (err) return Logger.logError(err);
 			
-			console.log("Delete successful");
+			Logger.logEvent("Delete successful");
 		});
 	});
 	res.sendStatus(200);
@@ -147,11 +145,11 @@ app.post("/movefile", (req, res) => {
 			{ mkdrip: true, clobber: false },
 			(err) => {
 				if (err) throw err;
-				console.log("Move complete.");
+				Logger.logEvent("Move complete.");
 			}
 		);
 	}
-	console.log(chalk.yellow(org + " ...was moved to... " + dest));
+	Logger.logEvent(org + " ...was moved to... " + dest);
 	res.sendStatus(200);
 });
 
@@ -165,7 +163,7 @@ app.get("/zip", (req, res) => {
 	});
 
 	archive.on("end", () => {
-		console.log("Zipped %d bytes", archive.pointer());
+		Logger.logEvent("Zipped %d bytes", archive.pointer());
 	});
 
 	res.attachment("archive-name.zip");
@@ -188,8 +186,8 @@ app.post("/extract", async (req) => {
 
 	try {
 		await extract(src, { dir: __dirname + "/" + dest });
-		console.log("Extraction complete");
+		Logger.logEvent("Extraction complete");
 	} catch (err) {
-		console.log(err);
+		Logger.logError(err);
 	}
 });
