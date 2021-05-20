@@ -1,8 +1,5 @@
-const express = require("express");
-const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-const fileUpload = require("express-fileupload");
 const chalk = require("chalk");
 const mv = require("mv");
 const rimraf = require("rimraf");
@@ -10,15 +7,10 @@ const archiver = require("archiver");
 const extract = require("extract-zip");
 
 const Date = require("./Utilities/DateTime");
+const app = require("./Utilities/Server");
 const Path = require("./Utilities/Path");
 
 const port = process.env.PORT || 5000;
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(fileUpload());
 
 app.listen(port, () => {
 	console.log("Server running on port: " + port);

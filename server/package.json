@@ -2,12 +2,12 @@
   "name": "vue_fs_server",
   "version": "0.9.0",
   "description": "vue-fs backend",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node .",
     "lint": "eslint --fix --ext .js,.jsx .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon index.js"
   },
   "author": "Derek Flynn",
   "license": "MIT",
