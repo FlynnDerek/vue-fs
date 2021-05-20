@@ -13,7 +13,7 @@ const Logger = require("./Utilities/Logger");
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-	Logger.System("Server running on port: " + port);
+	Logger.System(`Server running on port: ${port}`);
 });
 
 let my_path;
@@ -36,7 +36,7 @@ app.post("/upload", (req, res) => {
 	}
 	const myFile = req.files.file;
 
-	myFile.mv(`${folder_path + "/"}${myFile.name}`, (err) => {
+	myFile.mv(`${folder_path}/${myFile.name}`, (err) => {
 		if (err) {
 			Logger.Error(err);
 			return res.status(500).send({ msg: "Error occured" });
@@ -52,7 +52,7 @@ app.post("/getAllMainFolders", (req, res) => {
 	fs.readdir(dirPath, (err, filesPath) => {
 		if (err) throw err;
 		result = filesPath.map((filePath) => {
-			return dirPath + filePath;
+			return `${dirPath}${filePath}`;
 		});
 		res.send(result);
 	});
@@ -68,11 +68,11 @@ app.post("/getAllFilesFromSelectedFolder", (req, res) => {
 		if (err) throw err;
 		result = filesPath.map((filePath) => {
 			return {
-				paths: dirPath + "/" + filePath,
+				paths: `${dirPath}/${filePath}`,
 				names: filePath,
-				the_time: Date.lastUpdatedDate(dirPath + "/" + filePath),
-				is_dir: Path.isDir(dirPath + "/" + filePath),
-				fileExt: path.extname(dirPath + "/" + filePath),
+				the_time: DateTime.lastUpdatedDate(`${dirPath}/${filePath}`),
+				is_dir: Path.isDir(`${dirPath}/${filePath}`),
+				fileExt: path.extname(`${dirPath}/${filePath}`),
 			};
 		});
 		res.send(
@@ -85,15 +85,12 @@ app.post("/getAllFilesFromSelectedFolder", (req, res) => {
 
 // Create new folder
 app.post("/newFolder", (req, res) => {
-	const dir = req.body.current_path + "/" + req.body.folder_name;
+	const dir = `${req.body.current_path}/${req.body.folder_name}`;
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
 	}
 	Logger.Event(
-		"A new folder `" +
-			req.body.folder_name +
-			"` was created on " +
-			DateTime.Now()
+		`A new folder '${req.body.folder_name}' was created on ${DateTime.Now()}`
 	);
 	return res.sendStatus(200);
 });
@@ -108,8 +105,8 @@ app.post("/sendZips", (req, res) => {
 // Download a file
 app.get("/download", (req, res) => {
 	const selectedPath = my_path;
-	Logger.Event("Download: " + my_path);
-	const file = __dirname + selectedPath.substring(1);
+	Logger.Event(`Download: ${my_path}`);
+	const file = `${__dirname}${selectedPath.substring(1)}`;
 	res.sendFile(file);
 });
 
@@ -141,7 +138,7 @@ app.post("/movefile", (req, res) => {
 		const file = org[i];
 		mv(
 			file,
-			dest + "/" + path.basename(file),
+			`${dest}/${path.basename(file)}`,
 			{ mkdrip: true, clobber: false },
 			(err) => {
 				if (err) throw err;
@@ -149,7 +146,7 @@ app.post("/movefile", (req, res) => {
 			}
 		);
 	}
-	Logger.Event(org + " ...was moved to... " + dest);
+	Logger.Event(`${org} ...was moved to... ${dest}`);
 	res.sendStatus(200);
 });
 
@@ -185,7 +182,7 @@ app.post("/extract", async (req) => {
 	const dest = path.dirname(src);
 
 	try {
-		await extract(src, { dir: __dirname + "/" + dest });
+		await extract(src, { dir: `${__dirname}/${dest}` });
 		Logger.Event("Extraction complete");
 	} catch (err) {
 		Logger.Error(err);
