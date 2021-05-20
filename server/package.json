@@ -2,8 +2,9 @@
   "name": "vue_fs_server",
   "version": "0.9.0",
   "description": "vue-fs backend",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js"
   },
@@ -14,11 +15,10 @@
     "body-parser": "^1.19.0",
     "chalk": "^4.1.1",
     "cors": "^2.8.5",
+    "dateformat": "^4.5.1",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
-    "dateformat": "^4.5.1",
     "extract-zip": "^2.0.1",
-    "moment": "^2.29.1",
     "mv": "^2.1.1",
     "path": "^0.12.7",
     "rimraf": "^3.0.2"
