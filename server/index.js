@@ -6,7 +6,7 @@ const rimraf = require("rimraf");
 const archiver = require("archiver");
 const extract = require("extract-zip");
 
-const Date = require("./Utilities/DateTime");
+const DateTime = require("./Utilities/DateTime");
 const app = require("./Utilities/Server");
 const Path = require("./Utilities/Path");
 
@@ -94,7 +94,7 @@ app.post("/newFolder", (req, res) => {
 			"A new folder `" +
 			req.body.folder_name +
 			"` was created on " +
-			Date.Now()
+			DateTime.Now()
 		)
 	);
 	return res.sendStatus(200);

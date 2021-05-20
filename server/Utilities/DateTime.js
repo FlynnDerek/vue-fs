@@ -3,14 +3,17 @@ const fs = require("fs");
 
 class DateTime {
 
+	static Time(now) {
+		return Intl.DateTimeFormat("en", { hour: "numeric", minute: "numeric", hour12: true }).format(now);
+	}
+
 	static Now() {
 
 		const _now = new Date();
-
-		const time = Intl.DateTimeFormat("en", { hour: "numeric" }).format(_now);
+		const time = DateTime.Time(_now);
 
 		const _Date = _now.toLocaleDateString(
-			"en-gb",
+			"en-us",
 			{
 				year: "numeric",
 				month: "long",
@@ -19,7 +22,7 @@ class DateTime {
 			}
 		);
 
-		return(`${_Date}: ${time}`);
+		return(`${_Date} ${time}`);
 	}
 
 	// Format the last time a file was edited/created
