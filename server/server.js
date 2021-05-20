@@ -3,7 +3,6 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const fileUpload = require("express-fileupload");
-const dateFormat = require("dateformat");
 const chalk = require("chalk");
 const mv = require("mv");
 const rimraf = require("rimraf");
@@ -11,6 +10,7 @@ const archiver = require("archiver");
 const extract = require("extract-zip");
 
 const Date = require("./Utilities/DateTime");
+const Path = require("./Utilities/Path");
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(fileUpload());
 
-app.listen(port, function () {
+app.listen(port, () => {
 	console.log("Server running on port: " + port);
 });
 
@@ -44,7 +44,7 @@ app.post("/upload", (req, res) => {
 	}
 	const myFile = req.files.file;
 
-	myFile.mv(`${folder_path + "/"}${myFile.name}`, function (err) {
+	myFile.mv(`${folder_path + "/"}${myFile.name}`, (err) => {
 		if (err) {
 			console.log(err);
 			return res.status(500).send({ msg: "Error occured" });
@@ -57,9 +57,9 @@ app.post("/upload", (req, res) => {
 app.post("/getAllMainFolders", (req, res) => {
 	const dirPath = "./files/";
 	let result = [];
-	fs.readdir(dirPath, function (err, filesPath) {
+	fs.readdir(dirPath, (err, filesPath) => {
 		if (err) throw err;
-		result = filesPath.map(function (filePath) {
+		result = filesPath.map((filePath) => {
 			return dirPath + filePath;
 		});
 		res.send(result);
@@ -72,40 +72,24 @@ app.post("/getAllFilesFromSelectedFolder", (req, res) => {
 	folder_path = dirPath;
 	let result = [];
 
-	fs.readdir(dirPath, function (err, filesPath) {
+	fs.readdir(dirPath, (err, filesPath) => {
 		if (err) throw err;
-		result = filesPath.map(function (filePath) {
+		result = filesPath.map((filePath) => {
 			return {
 				paths: dirPath + "/" + filePath,
 				names: filePath,
-				the_time: lastUpdatedDate(dirPath + "/" + filePath),
-				is_dir: isDir(dirPath + "/" + filePath),
+				the_time: Date.lastUpdatedDate(dirPath + "/" + filePath),
+				is_dir: Path.isDir(dirPath + "/" + filePath),
 				fileExt: path.extname(dirPath + "/" + filePath),
 			};
 		});
 		res.send(
-			result.sort(function (a, b) {
+			result.sort((a, b) => {
 				return new Date(b.the_time) - new Date(a.the_time);
 			})
 		);
 	});
 });
-
-// Format the last time a file was edited/created
-function lastUpdatedDate(file) {
-	const { ctime } = fs.statSync(file);
-	return dateFormat(ctime, "mm/dd/yy, h:MM TT");
-}
-
-// Check if a given path is a directory
-function isDir(path) {
-	try {
-		const stat = fs.lstatSync(path);
-		return stat.isDirectory();
-	} catch (e) {
-		return false;
-	}
-}
 
 // Create new folder
 app.post("/newFolder", (req, res) => {
@@ -148,8 +132,8 @@ app.get("/view", (req, res) => {
 app.post("/delete", (req, res) => {
 	const thePath = req.body.sent_path;
 	
-	thePath.forEach(function (filepath) {
-		rimraf(filepath, function (err) {
+	thePath.forEach((filepath) => {
+		rimraf(filepath, (err) => {
 			if (err) return console.log(err);
 			
 			console.log("Delete successful");
@@ -169,7 +153,7 @@ app.post("/movefile", (req, res) => {
 			file,
 			dest + "/" + path.basename(file),
 			{ mkdrip: true, clobber: false },
-			function (err) {
+			(err) => {
 				if (err) throw err;
 				console.log("Move complete.");
 			}
@@ -184,11 +168,11 @@ app.get("/zip", (req, res) => {
 	const files = myZip2;
 	const archive = archiver("zip");
 
-	archive.on("error", function (err) {
+	archive.on("error", (err) => {
 		res.status(500).send({ error: err.message });
 	});
 
-	archive.on("end", function () {
+	archive.on("end", () => {
 		console.log("Zipped %d bytes", archive.pointer());
 	});
 
@@ -198,7 +182,7 @@ app.get("/zip", (req, res) => {
 	for (const i in files) {
 		archive.file(files[i], { name: path.basename(files[i]) });
 
-		if (isDir(files[i])) {
+		if (Path.isDir(files[i])) {
 			archive.directory(files[i], path.basename(files[i]));
 		}
 	}

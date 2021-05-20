@@ -1,3 +1,6 @@
+const dateFormat = require("dateformat");
+const fs = require("fs");
+
 class DateTime {
 
 	static Now() {
@@ -17,6 +20,12 @@ class DateTime {
 		);
 
 		return(`${_Date}: ${time}`);
+	}
+
+	// Format the last time a file was edited/created
+	static lastUpdatedDate(file) {
+		const { ctime } = fs.statSync(file);
+		return dateFormat(ctime, "mm/dd/yy, h:MM TT");
 	}
 }
 
