@@ -13,7 +13,7 @@ const Logger = require("./Utilities/Logger");
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-	Logger.logSystem("Server running on port: " + port);
+	Logger.System("Server running on port: " + port);
 });
 
 let my_path;
@@ -38,7 +38,7 @@ app.post("/upload", (req, res) => {
 
 	myFile.mv(`${folder_path + "/"}${myFile.name}`, (err) => {
 		if (err) {
-			Logger.logError(err);
+			Logger.Error(err);
 			return res.status(500).send({ msg: "Error occured" });
 		}
 		return res.send({ name: myFile.name, path: `/${myFile.name}` });
@@ -89,11 +89,11 @@ app.post("/newFolder", (req, res) => {
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
 	}
-	Logger.logEvent(
+	Logger.Event(
 		"A new folder `" +
 			req.body.folder_name +
 			"` was created on " +
-			Date.Now()
+			DateTime.Now()
 	);
 	return res.sendStatus(200);
 });
@@ -108,7 +108,7 @@ app.post("/sendZips", (req, res) => {
 // Download a file
 app.get("/download", (req, res) => {
 	const selectedPath = my_path;
-	Logger.logEvent("Download: " + my_path);
+	Logger.Event("Download: " + my_path);
 	const file = __dirname + selectedPath.substring(1);
 	res.sendFile(file);
 });
@@ -124,9 +124,9 @@ app.post("/delete", (req, res) => {
 	
 	thePath.forEach((filepath) => {
 		rimraf(filepath, (err) => {
-			if (err) return Logger.logError(err);
+			if (err) return Logger.Error(err);
 			
-			Logger.logEvent("Delete successful");
+			Logger.Event("Delete successful");
 		});
 	});
 	res.sendStatus(200);
@@ -145,11 +145,11 @@ app.post("/movefile", (req, res) => {
 			{ mkdrip: true, clobber: false },
 			(err) => {
 				if (err) throw err;
-				Logger.logEvent("Move complete.");
+				Logger.Event("Move complete.");
 			}
 		);
 	}
-	Logger.logEvent(org + " ...was moved to... " + dest);
+	Logger.Event(org + " ...was moved to... " + dest);
 	res.sendStatus(200);
 });
 
@@ -163,7 +163,7 @@ app.get("/zip", (req, res) => {
 	});
 
 	archive.on("end", () => {
-		Logger.logEvent("Zipped %d bytes", archive.pointer());
+		Logger.Event("Zipped %d bytes", archive.pointer());
 	});
 
 	res.attachment("archive-name.zip");
@@ -186,8 +186,8 @@ app.post("/extract", async (req) => {
 
 	try {
 		await extract(src, { dir: __dirname + "/" + dest });
-		Logger.logEvent("Extraction complete");
+		Logger.Event("Extraction complete");
 	} catch (err) {
-		Logger.logError(err);
+		Logger.Error(err);
 	}
 });
