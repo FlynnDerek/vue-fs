@@ -210,18 +210,15 @@ app.get("/zip", (req, res) => {
 });
 
 // Extract selected .zip file *Please note only .zip files are supported for now
-app.post("/extract", (req, res) => {
+app.post("/extract", async (req, res) => {
   var src = req.body.path_name;
   var dest = path.dirname(src);
 
-  async function ext() {
-    try {
-      await extract(src, { dir: __dirname + "/" + dest });
-      console.log("Extraction complete");
-    } catch (err) {
-      console.log(err)
-    }
+  try {
+    await extract(src, { dir: __dirname + "/" + dest });
+    console.log("Extraction complete");
+  } catch (err) {
+    console.log(err)
   }
-  ext();
 });
 
