@@ -1,4 +1,3 @@
-const dateFormat = require("dateformat");
 const fs = require("fs");
 
 class DateTime {
@@ -25,10 +24,27 @@ class DateTime {
 		return(`${_Date} ${time}`);
 	}
 
+	static Format(date) {
+
+		const _now = new Date(date);
+
+		const _Date = _now.toLocaleDateString(
+			"en-us",
+			{
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+				timeZone: "utc"
+			}
+		);
+
+		return(_Date);
+	}
+
 	// Format the last time a file was edited/created
 	static lastUpdatedDate(file) {
 		const { ctime } = fs.statSync(file);
-		return dateFormat(ctime, "mm/dd/yy, h:MM TT");
+		return DateTime.Format(ctime);
 	}
 }
 
