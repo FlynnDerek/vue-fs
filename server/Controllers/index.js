@@ -4,11 +4,13 @@ const mv = require("mv");
 const rimraf = require("rimraf");
 const archiver = require("archiver");
 const extract = require("extract-zip");
+const { Router } = require("express");
 
 const DateTime = require("../Utilities/DateTime");
 const Path = require("../Utilities/Path");
-const app = require("../Utilities/Server");
 const Logger = require("../Utilities/Logger");
+
+const router = Router();
 
 let my_path;
 let myZip2;
@@ -16,7 +18,7 @@ let myZip2;
 let folder_path;
 
 // Responds with the relative path of a selected directory or file
-app.post("/sendPath", (req, res) => {
+router.post("/sendPath", (req, res) => {
 	my_path = req.body.sent_path;
 	// my_file1 = req.body.sent_file;
 	const isDir = path.dirname(my_path);
@@ -24,7 +26,7 @@ app.post("/sendPath", (req, res) => {
 });
 
 // Uploads files to the file directory
-app.post("/upload", (req, res) => {
+router.post("/upload", (req, res) => {
 	if (!req.files) {
 		return res.status(500).send({ msg: "file is not found" });
 	}
@@ -40,7 +42,7 @@ app.post("/upload", (req, res) => {
 });
 
 // List all sub-directories in the 'files' directory.
-app.post("/getAllMainFolders", (req, res) => {
+router.post("/getAllMainFolders", (req, res) => {
 	const dirPath = "./files/";
 	let result = [];
 	fs.readdir(dirPath, (err, filesPath) => {
@@ -53,7 +55,7 @@ app.post("/getAllMainFolders", (req, res) => {
 });
 
 // List all files and directories from a selected directory
-app.post("/getAllFilesFromSelectedFolder", (req, res) => {
+router.post("/getAllFilesFromSelectedFolder", (req, res) => {
 	const dirPath = req.body.path_name;
 	folder_path = dirPath;
 	let result = [];
@@ -78,7 +80,7 @@ app.post("/getAllFilesFromSelectedFolder", (req, res) => {
 });
 
 // Create new folder
-app.post("/newFolder", (req, res) => {
+router.post("/newFolder", (req, res) => {
 	const dir = `${req.body.current_path}/${req.body.folder_name}`;
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
@@ -90,14 +92,14 @@ app.post("/newFolder", (req, res) => {
 });
 
 // Pass the user's selected paths for use with the zip function
-app.post("/sendZips", (req, res) => {
+router.post("/sendZips", (req, res) => {
 	const myZip = req.body.sentZip;
 	myZip2 = req.body.sentZip;
 	res.send(myZip);
 });
 
 // Download a file
-app.get("/download", (req, res) => {
+router.get("/download", (req, res) => {
 	const selectedPath = my_path;
 	Logger.Event(`Download: ${my_path}`);
 	const file = `${__dirname}${selectedPath.substring(1)}`;
@@ -105,12 +107,12 @@ app.get("/download", (req, res) => {
 });
 
 // View a file
-app.get("/view", (req, res) => {
+router.get("/view", (req, res) => {
 	res.sendFile(my_path, { root: __dirname });
 });
 
 // Delete selected files and directories
-app.post("/delete", (req, res) => {
+router.post("/delete", (req, res) => {
 	const thePath = req.body.sent_path;
 	
 	thePath.forEach((filepath) => {
@@ -124,7 +126,7 @@ app.post("/delete", (req, res) => {
 });
 
 // Move selected files and directories
-app.post("/movefile", (req, res) => {
+router.post("/movefile", (req, res) => {
 	const org = req.body.org_path;
 	const dest = req.body.dest_path;
 
@@ -145,7 +147,7 @@ app.post("/movefile", (req, res) => {
 });
 
 // Zip selected files and directories
-app.get("/zip", (req, res) => {
+router.get("/zip", (req, res) => {
 	const files = myZip2;
 	const archive = archiver("zip");
 
@@ -171,7 +173,7 @@ app.get("/zip", (req, res) => {
 });
 
 // Extract selected .zip file *Please note only .zip files are supported for now
-app.post("/extract", async (req) => {
+router.post("/extract", async (req) => {
 	const src = req.body.path_name;
 	const dest = path.dirname(src);
 
@@ -183,4 +185,4 @@ app.post("/extract", async (req) => {
 	}
 });
 
-module.exports = app;
+module.exports = router;

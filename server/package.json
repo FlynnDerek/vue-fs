@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "extract-zip": "^2.0.1",
+    "http-terminator": "^3.0.0",
     "mv": "^2.1.1",
     "path": "^0.12.7",
     "rimraf": "^3.0.2"

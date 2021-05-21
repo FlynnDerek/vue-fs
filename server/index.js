@@ -1,9 +1,16 @@
-const { Config } = require("./Utilities/Config");
-const Logger = require("./Utilities/Logger");
-const app = require("./Controllers");
+require("dotenv").config();
 
-const port = Config.PORT;
+const ExitHandler = require("./Utilities/ExitHandler");
+const Server = require("./Utilities/Server");
 
-app.listen(port, () => {
-	Logger.System(`Server running on port: ${port}`);
-});
+const start = async () => {
+	ExitHandler.Setup();
+
+	await Server.Setup();
+
+	ExitHandler.Configure(async () => {
+		await Server.Close();
+	});
+};
+
+start();
