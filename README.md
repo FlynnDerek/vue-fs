@@ -6,6 +6,8 @@ creates a more robust backend. Cheers! :beer:
 
 :rocket: [Demo](https://FlynnDerek.github.io)
 
+:crystal_ball: [Vue-fs Discord Server](https://discord.gg/yPWMcm8SRP) -> Discuss issues, ideas or get help with project setup 
+
 This project exists mostly as a challenge to myself! Vue-fs is meant to be a
 complete home file server and file management solution. The idea being you can run it on a Raspberry Pi, an old laptop or even a rack server. 
 Over time I will be adding extra features to this project, listed below. I also welcome collaboration, should any of you feel inclined :)
