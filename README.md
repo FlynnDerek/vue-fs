@@ -1,5 +1,9 @@
 # vue-fs
 
+:fire: A big thanks to [Jude Giordano](https://github.com/judegiordano), [Seditionist](https://github.com/seditionist) and [Gazij](https://github.com/gazsij) for their
+work on [PR #2](https://github.com/FlynnDerek/vue-fs/pull/2). This PR removes much of the bloat from the old backend, provides feature fixes and 
+creates a more robust backend. Cheers! :beer:
+
 :rocket: [Demo](https://FlynnDerek.github.io)
 
 This project exists mostly as a challenge to myself! Vue-fs is meant to be a
@@ -53,3 +57,10 @@ node server.js
 # if you have nodemon installed globally
 npm run dev
 ```
+
+## Contributors and honorable mentions
+The following people have made this FOSS project possible:
+- [Tyler Ingraham](https://413justice.com) - A great mentor, commisioned a secured production version of vue-fs for use at his law office.
+- [Jude Giordano](https://github.com/judegiordano) - Core contributor
+- [Seditionist](https://github.com/seditionist) - Core contributor
+- [Gazij](https://github.com/gazsij) - Core contributor
