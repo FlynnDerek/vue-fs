@@ -17,6 +17,8 @@ class DateTime {
 				year: "numeric",
 				month: "long",
 				day: "numeric",
+				hour: "numeric",
+				minute: "numeric",
 				timeZone: "utc"
 			}
 		);
@@ -34,6 +36,8 @@ class DateTime {
 				year: "numeric",
 				month: "long",
 				day: "numeric",
+			        hour: "numeric",
+				minute: "numeric",
 				timeZone: "utc"
 			}
 		);
