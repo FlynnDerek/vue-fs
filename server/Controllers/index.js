@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { cwd } = require("process");
 const path = require("path");
 const mv = require("mv");
 const rimraf = require("rimraf");
@@ -102,13 +103,14 @@ router.post("/sendZips", (req, res) => {
 router.get("/download", (req, res) => {
 	const selectedPath = my_path;
 	Logger.Event(`Download: ${my_path}`);
-	const file = `${__dirname}${selectedPath.substring(1)}`;
+	const file = path.join(cwd(), selectedPath.substring(1));
 	res.sendFile(file);
 });
 
 // View a file
 router.get("/view", (req, res) => {
-	res.sendFile(my_path, { root: __dirname });
+	
+	res.sendFile(my_path, { root: cwd() });
 });
 
 // Delete selected files and directories
@@ -178,7 +180,8 @@ router.post("/extract", async (req) => {
 	const dest = path.dirname(src);
 
 	try {
-		await extract(src, { dir: `${__dirname}/${dest}` });
+		const dir = path.join(cwd(), dest);
+		await extract(src, { dir });
 		Logger.Event("Extraction complete");
 	} catch (err) {
 		Logger.Error(err);

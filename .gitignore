@@ -25,6 +25,6 @@ pnpm-debug.log*
 *.sw?
  
 #  untrack vue build
- client/dist/**/*
+client/dist/**/*
 
- files/**/*
+server/files/**/*
