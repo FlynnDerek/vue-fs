@@ -170,41 +170,14 @@
                 <path
                   d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"
                 /></svg
-              >Unzip</v-btn
-            >
-
-            <v-btn
-              class="float-right"
-              @click="downloadZIP()"
-              id="downloadMulti"
-              small
-              color="#5546ff"
-              style="color: white; margin-top: 10px; margin-right: 5px;"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                style="margin-right: 7px; margin-left: -3px;"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-file-earmark-zip"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M5 7.5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v.938l.4 1.599a1 1 0 0 1-.416 1.074l-.93.62a1 1 0 0 1-1.11 0l-.929-.62a1 1 0 0 1-.415-1.074L5 8.438V7.5zm2 0H6v.938a1 1 0 0 1-.03.243l-.4 1.598.93.62.929-.62-.4-1.598A1 1 0 0 1 7 8.438V7.5z"
-                />
-                <path
-                  d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1h-2v1h-1v1h1v1h-1v1h1v1H6V5H5V4h1V3H5V2h1V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"
-                />
-              </svg>
-              ZIP</v-btn
+              >Extract</v-btn
             >
 
             <v-btn
               id="btnDownload"
               small
               color="#8fe8c2"
-              @click="downloadFile()"
+              @click="downloadCheckedObjects()"
               class="float-right"
             >
               <svg
@@ -558,10 +531,7 @@
           ></v-text-field>
 
           <div style="margin-top: 20px;">
-            <label
-              for="folderSet"
-              style="font-size: 12px; line-height: 10px;"
-            >
+            <label for="folderSet" style="font-size: 12px; line-height: 10px;">
               <input
                 name="group1"
                 id="folderSet"
@@ -783,8 +753,13 @@ import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
 import axios from "axios";
 import $ from "jquery";
-import FileDownload from "js-file-download";
- /* eslint-disable */ 
+/* eslint-disable */
+
+import DownloadService from "../services/DownloadService.js";
+import ExtractionService from "../services/ExtractionService.js";
+
+var _downloadService = new DownloadService();
+var _extractionService = new ExtractionService();
 
 export default {
   components: {
@@ -796,15 +771,14 @@ export default {
         url: "http://localhost:5000/upload",
         thumbnailWidth: 150,
         maxFilesize: 10000,
-        headers: { "My-Awesome-Header": "header value" },
         dictDefaultMessage: "Drag & Drop or Click to Upload",
         addRemoveLinks: true,
         dictRemoveFile: "Clear File",
         timeout: 10000000,
       },
       folderName: "",
-      files: [], 
-      folders: [], 
+      files: [],
+      folders: [],
       picked: "./files/A1_Main",
       movePicked: "No Folder Selected",
       picked_File: "./files/A1_Main/no_file_selected.txt",
@@ -816,12 +790,11 @@ export default {
   },
 
   mounted() {
-    this.getFolders()
+    this.getFolders();
     this.updateTable("./files/A1_Main");
   },
 
   methods: {
-
     // Shows #folderCard
     showFolderCard() {
       document.getElementById("fileTable").style.visibility = "hidden";
@@ -841,7 +814,7 @@ export default {
       document.getElementById("btnDelete").disabled = false;
     },
 
-  // Shows #deleteCard
+    // Shows #deleteCard
     deleteClicked() {
       document.getElementById("fileTable").style.visibility = "hidden";
       document.getElementById("exampleTr").style.visibility = "hidden";
@@ -850,7 +823,7 @@ export default {
       document.getElementById("btnNewFolder").disabled = true;
     },
 
-    // Cancels and hides #deleteCard 
+    // Cancels and hides #deleteCard
     cancelDelete() {
       document.getElementById("fileTable").style.visibility = "visible";
       document.getElementById("exampleTr").style.visibility = "visible";
@@ -863,10 +836,12 @@ export default {
 
     // Shows #moveCard
     moveClicked() {
-         document.getElementById("btnMoveClick").style.opacity = "0.5";
-          $("#btnMoveClick").prop("disabled", true).click(function() {
+      document.getElementById("btnMoveClick").style.opacity = "0.5";
+      $("#btnMoveClick")
+        .prop("disabled", true)
+        .click(function() {
           console.log("btnMoveClick disabled....");
-      });
+        });
       document.getElementById("moveCard").style.display = "block";
       document.getElementById("btnNewFolder").style.opacity = 0.5;
       document.getElementById("exampleTr").style.visibility = "hidden";
@@ -876,7 +851,7 @@ export default {
 
     // Cancels and hides #moveCard
     cancelMove() {
-        $("#fileTable input:checkbox").prop("checked", false);
+      $("#fileTable input:checkbox").prop("checked", false);
       this.checkedObjects = [];
       document.getElementById("moveCard").style.display = "none";
       document.getElementById("exampleTr").style.visibility = "visible";
@@ -906,7 +881,7 @@ export default {
         });
     },
 
-    // Call this function and pass a relative path to update 
+    // Call this function and pass a relative path to update
     // the right-hand table after performing an action
     updateTable(path) {
       axios
@@ -926,7 +901,7 @@ export default {
       $("#exampleTr tr").each(function(a, b) {
         $(b).click(function() {
           $("#exampleTr tr").css("background", "#ffffff");
-          $(this).css("background", "#dddddd");
+          $(this).css("background", "#f9fbfc");
         });
       });
 
@@ -961,12 +936,14 @@ export default {
         });
 
       document.getElementById("btnMoveClick").style.opacity = "1";
-        $("#btnMoveClick").prop("disabled", false).click(function() {
-        console.log("btnMoveClick enabled...");
-      });
+      $("#btnMoveClick")
+        .prop("disabled", false)
+        .click(function() {
+          console.log("btnMoveClick enabled...");
+        });
     },
 
-    // Checks or unchecks an object and adds the path to the "checkedObjects" array. 
+    // Checks or unchecks an object and adds the path to the "checkedObjects" array.
     // Passes checked objects to the server via /sendZips
     toggleFile(file) {
       document.getElementById("btnMoveClick").style.opacity = "1";
@@ -1039,7 +1016,7 @@ export default {
         });
     },
 
-  // View a selected file in a new tab, if applicable
+    // View a selected file in a new tab, if applicable
     viewFile() {
       axios
         .get("http://localhost:5000/view", {})
@@ -1051,13 +1028,13 @@ export default {
         });
     },
 
-  // Uncheck all objects and clear the checkedObjects array
+    // Uncheck all objects and clear the checkedObjects array
     clearSelects() {
       this.checkedObjects = [];
       $("#fileTable input:checkbox").prop("checked", false);
     },
 
-    // Resets current path as the 'root' directory, used 
+    // Resets current path as the 'root' directory, used
     // when creating new 'top-level' directories
     setFolderAsMain() {
       this.picked = "./files/";
@@ -1107,34 +1084,19 @@ export default {
         });
     },
 
-    // Downloads a selected file
-    downloadFile() {
-      var get = this.picked_File;
-      axios
-        .get("http://localhost:5000/download", {
-          responseType: "blob",
-        })
-        .then((response) => {
-          FileDownload(response.data, get);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    downloadCheckedObjects() {
+      if (this.checkedObjects.length == 1) {
+        _downloadService.downloadSingleFile(this.picked_File);
+      }
+      if (this.checkedObjects.length > 1) {
+        _downloadService.downloadMultiple();
+      }
     },
-    
-    // Downloads multiple checked objects and their contents
-    downloadZIP() {
-      axios
-        .get("http://localhost:5000/zip", {
-          responseType: "blob", // Important
-        })
-        .then((response) => {
-          FileDownload(response.data, new Date().toLocaleString() + ".zip");
-          $("#fileTable input:checkbox").prop("checked", false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+
+    extract() {
+      _extractionService.extract(this.picked).then((response) => {
+        this.updateTable(this.currentDir);
+      });
     },
 
     // Move all checked objects to a specified directory (the movePicked array)
@@ -1148,7 +1110,7 @@ export default {
         .then((res) => {
           this.checkedObjects = [];
           $("#fileTable input:checkbox").prop("checked", false);
-          this.updateTable(this.movePicked)
+          this.updateTable(this.movePicked);
           this.picked = this.movePicked;
           document.getElementById("moveCard").style.display = "none";
           document.getElementById("btnNewFolder").style.disabled = "false";
@@ -1182,19 +1144,6 @@ export default {
         }
       }
     },
-
-    // Extract a .zip file *Please note only .zip files are supported for now*
-    extract() {
-      axios
-        .post("http://localhost:5000/extract", {
-          path_name: this.picked,
-        })
-        .then((res) => {
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
   },
 };
 </script>
@@ -1207,7 +1156,7 @@ export default {
 }
 
 #topBar {
-  background-color: #007bff; 
+  background-color: #007bff;
   height: 50px;
 }
 
@@ -1218,7 +1167,6 @@ export default {
 #myDropzone {
   margin-top: 15px;
 }
-
 
 #btnNewFolder {
   margin-top: 10px;
@@ -1316,7 +1264,7 @@ export default {
 }
 
 #trDirectories:hover {
-  background-color: #dddddd !important;
+  background-color: #f9fbfc;
   width: 100%;
 }
 
@@ -1457,8 +1405,6 @@ thead th {
   user-select: none;
 }
 
-
-
 @media (min-width: 768px) {
   #sidebar-wrapper {
     margin-left: 0;
@@ -1496,3 +1442,5 @@ thead th {
   }
 }
 </style>
+
+function newFunction(data2) { this.files=data2; }
