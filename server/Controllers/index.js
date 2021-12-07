@@ -6,8 +6,6 @@ const rimraf = require("rimraf");
 const archiver = require("archiver");
 const extract = require("extract-zip");
 const { Router } = require("express");
-const querystring = require('querystring');
-const https = require('https');
 
 const DateTime = require("../Utilities/DateTime");
 const Path = require("../Utilities/Path");
