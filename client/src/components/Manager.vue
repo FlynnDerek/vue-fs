@@ -8,7 +8,6 @@
         <p id="pathReadout"><b>Path: </b> {{ picked }}</p>
         <p id="selectedReadout"><b>Checked Objects: </b>{{ checkedObjects }}</p>
       </nav>
-
       <div id="divFileManager" class="container-fluid">
         <div class="row">
           <div class="col-md-12">
@@ -16,7 +15,7 @@
               <div class="col-md-10 float-left p-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  style="position: absolute; margin-top: 19px; margin-left: 5px;"
+                  style="position: absolute; margin-top: 17px; margin-left: 7px;"
                   width="14"
                   height="14"
                   fill="currentColor"
@@ -28,7 +27,6 @@
                   />
                 </svg>
                 <input
-                  id="mySearch"
                   class="form-control form-control-sm searchBar"
                   v-model="searchTyped"
                   type="text"
@@ -40,10 +38,11 @@
 
             <v-btn
               id="btnDelete"
+              v-b-modal.deleteModal
               class="float-right"
-              @click="deleteClicked()"
               style="color: white; margin-left: 5px; margin-top: 10px;"
               color="#dc3545"
+              :disabled="checkedObjects.length == 0"
               small
             >
               <svg
@@ -69,7 +68,8 @@
             <v-btn
               id="btnMove"
               class="float-right"
-              @click="moveClicked()"
+              v-b-modal.moveModal
+              :disabled="checkedObjects.length == 0"
               style="margin-left: 5px; margin-top: 10px;"
               color="#ffb10a"
               small
@@ -126,7 +126,7 @@
               color="#007bff"
               small
               id="btnNewFolder"
-              @click="showFolderCard()"
+              v-b-modal.folderModal
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -522,45 +522,157 @@
           </div>
         </div>
 
-        <v-card class="mx-auto col-md-4" id="folderCard">
-          <p id="momentFormat"></p>
+        <!-- New Folder Modal -->
+        <b-modal
+          ref="folderModal"
+          id="folderModal"
+          hide-footer
+          title="New Folder"
+        >
           <v-text-field
+            class="col-md-8 mx-auto"
             label="Folder Name"
             v-model="folderName"
             hide-details="auto"
+            autofocus
           ></v-text-field>
 
-          <div style="margin-top: 20px;">
-            <label for="folderSet" style="font-size: 12px; line-height: 10px;">
-              <input
-                name="group1"
-                id="folderSet"
-                type="radio"
-                @click="setFolderAsMain()"
-              />
-              Set as Main (Top-Level) Folder
-            </label>
+          <div class="float-right mt-5">
+            <v-btn small @click="hideFolderModal()">Cancel</v-btn>
+            <v-btn
+              small
+              style="background-color: #8fe8c2; margin-left: 10px;"
+              @click="newFolder()"
+              :disabled="folderName.length == 0"
+            >
+              Add Folder</v-btn
+            >
+          </div>
+        </b-modal>
+
+        <!-- Move items modal -->
+        <b-modal
+          ref="moveModal"
+          id="moveModal"
+          hide-footer
+          scrollable
+          title="Move"
+        >
+          <div class="d-block text-center">
+            <ul
+              style="list-style: none; padding-left: 10px; text-align: left; font-size: 14px; font-family: consolas;"
+            >
+              <li v-for="alias5 in checkedObjects" :key="alias5">
+                <p>
+                  <b>- {{ alias5.substring(8) }}</b>
+                </p>
+              </li>
+            </ul>
           </div>
 
-          <v-btn
-            small
-            class="mx-auto"
-            style="margin-top: 20px;"
-            @click="cancelNewFolder()"
-            >Cancel</v-btn
-          >
-          <v-btn
-            small
-            class="mx-auto"
-            style="margin-top: 20px; background-color: #8fe8c2;"
-            @click="newFolder()"
-          >
-            Add Folder</v-btn
-          >
-        </v-card>
+          <div class="d-block">
+            <div class="row">
+              <div class="col-md-6">
+                <table
+                  id="tableMove"
+                  style="border: 2px solid #e5e5e5; margin-top: 10px; max-height: 400px; overflow-y: scroll;"
+                >
+                  <tbody>
+                    <tr
+                      v-for="alias3 in folders"
+                      :key="alias3"
+                      id="trDirectories"
+                    >
+                      <div
+                        id="explorerSpan"
+                        v-on:click="selectSwitchMove(alias3)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          style="margin-right: 10px;"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-folder"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M.54 3.87L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
+                          />
+                        </svg>
+                        {{ alias3.substring(8) }}
+                      </div>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-        <v-card class="mx-auto col-md-7" id="deleteCard">
-          <center>
+              <div class="col-md-6">
+                <table
+                  id="fileTable"
+                  class="display col-md-12"
+                  style="overflow-y: scroll; border: 2px solid #e5e5e5; margin-top: 10px;"
+                >
+                  <tbody>
+                    <tr
+                      id="entries"
+                      v-for="file in files"
+                      :key="file.name"
+                      v-on:click="selectSwitchMove(file.paths)"
+                    >
+                      <div id="explorerSpan2" v-if="file.is_dir == true">
+                        <svg
+                          v-if="file.is_dir == true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          style="margin-right: 10px; margin-left: 10px;"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-folder"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
+                          />
+                        </svg>
+                        <span id="fileName">{{ file.names }}</span>
+                      </div>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 17px;">
+            <v-chip id="chipMoveDest" outlined text color="#1d5df9"
+              ><span id="destInner">Destination: </span
+              >{{ moveDestination }}</v-chip
+            >
+          </p>
+          <div class="float-right">
+            <v-btn style="margin-top: 10px;" @click="hideMoveModal()"
+              >Cancel</v-btn
+            >
+            <v-btn
+              id="btnMoveClick"
+              style="color: white; margin-top: 10px; margin-left: 10px;"
+              color="#007bff"
+              :disabled="moveDestination == 'No Folder Selected'"
+              @click="moveFile()"
+              >Move</v-btn
+            >
+          </div>
+        </b-modal>
+
+        <b-modal
+          ref="deleteModal"
+          id="deleteModal"
+          hide-footer
+          scrollable
+          title="Delete"
+        >
+          <div class="d-block text-center">
             <svg
               style="text-align: center; color: #dc3545;"
               xmlns="http://www.w3.org/2000/svg"
@@ -577,183 +689,44 @@
                 d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"
               />
             </svg>
-          </center>
-          <p style="text-align: center; margin-top: 10px;">
-            Are you sure you want to delete the following?
-          </p>
-          <div class="mx-auto col-md-12">
-            <ul
-              style="list-style: none; margin-top: -10px; padding-left: 10px; padding-bottom: 10px; text-align: left; font-size: 14px; font-family: consolas;"
-            >
-              <b
-                ><li v-for="alias4 in checkedObjects" :key="alias4">
-                  - {{ alias4.substring(8) }}
-                </li></b
-              >
-            </ul>
-          </div>
-
-          <v-btn
-            small
-            class="mx-auto"
-            style="margin-top: 20px;"
-            @click="cancelDelete()"
-            >No</v-btn
-          >
-          <v-btn
-            small
-            class="mx-auto"
-            style="margin-top: 20px; background-color: #dc3545; color: white;"
-            @click="deleteFile()"
-            >Yes</v-btn
-          >
-        </v-card>
-
-        <v-card class="mx-auto col-md-6" id="moveCard">
-          <div style="background-color:#e4e8fb; ">
-            <p style="padding-left: 10px; padding-top: 5px;">
-              Select the folder you'd like to move the following to:
+            <p style="text-align: center; margin-top: 10px;">
+              Are you sure you want to delete the following?
             </p>
-            <ul
-              style="list-style: none; margin-top: -10px; padding-left: 10px; padding-bottom: 10px; text-align: left; font-size: 14px; font-family: consolas;"
-            >
-              <b
-                ><li v-for="alias5 in checkedObjects" :key="alias5">
-                  - {{ alias5.substring(8) }}
-                </li></b
+            <div class="mx-auto col-md-12">
+              <ul
+                style="list-style: none; margin-top: -10px; padding-left: 10px; padding-bottom: 10px; text-align: left; font-size: 14px; font-family: consolas;"
               >
-            </ul>
-          </div>
-
-          <div
-            class="row nopadding col-md-12"
-            style="margin-top: -20px !important;"
-          >
-            <div class="col-md-6">
-              <table
-                id="tableMove"
-                class="display col-md-12"
-                style="border: 2px solid #e5e5e5; margin-top: 10px; max-height: 400px; overflow-y: scroll;"
-              >
-                <tbody>
-                  <tr
-                    v-for="alias3 in folders"
-                    :key="alias3"
-                    id="trDirectories"
-                  >
-                    <div
-                      id="explorerSpan"
-                      v-on:click="selectSwitchMove(alias3)"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        style="margin-right: 10px;"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-folder"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          d="M.54 3.87L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
-                        />
-                      </svg>
-                      {{ alias3.substring(8) }}
-                    </div>
-
-                    <div></div>
-                  </tr>
-                </tbody>
-              </table>
+                <b
+                  ><li v-for="alias4 in checkedObjects" :key="alias4">
+                    - {{ alias4.substring(8) }}
+                  </li></b
+                >
+              </ul>
             </div>
-
-            <div class="col-md-6">
-              <table
-                id="fileTable"
-                class="display col-md-12"
-                style="overflow-y: scroll; border: 2px solid #e5e5e5; margin-top: 10px;"
+            <div class="float-right">
+              <v-btn small style="margin-top: 20px;" @click="hideDeleteModal()"
+                >Cancel</v-btn
               >
-                <tbody>
-                  <tr
-                    id="entries"
-                    v-for="alias2 in files"
-                    :key="alias2.name"
-                    v-on:click="selectSwitchMove(alias2.paths)"
-                  >
-                    <div id="explorerSpan2" v-if="alias2.is_dir == true">
-                      <svg
-                        v-if="alias2.is_dir == true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        style="margin-right: 10px; margin-left: 10px;"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-folder"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
-                        />
-                      </svg>
-
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        v-if="alias2.is_dir == false"
-                        style="margin-right: 10px; margin-left: 10px; color: #007bff;"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-file-earmark"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"
-                        />
-                      </svg>
-
-                      <span id="fileName">{{ alias2.names }}</span>
-                      <span
-                        style="margin-right: 10px; font-family:'consolas'; font-size: 13px;"
-                        class="float-right"
-                        ><i>{{ alias2.the_time }}</i></span
-                      >
-
-                      <span
-                        id="isDir"
-                        style="display: none; margin-right: 10px; font-family:'consolas'; font-size: 13px;"
-                        class="float-right"
-                        ><i>{{ alias2.is_dir }}</i></span
-                      >
-                    </div>
-                  </tr>
-                </tbody>
-              </table>
+              <v-btn
+                small
+                style="margin-top: 20px; background-color: #dc3545; color: white; margin-left: 10px;"
+                @click="deleteFile()"
+                >Delete</v-btn
+              >
             </div>
           </div>
-
-          <p style="font-size: 17px;">
-            <b>Destination Path:</b> {{ movePicked }}
-          </p>
-          <v-btn style="margin-top: 10px;" @click="cancelMove()">Cancel</v-btn>
-          <v-btn
-            id="btnMoveClick"
-            style="color: white; margin-top: 10px;"
-            color="#007bff"
-            @click="moveFile()"
-            >Move</v-btn
-          >
-        </v-card>
+        </b-modal>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+/* eslint-disable */
 import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
 import axios from "axios";
 import $ from "jquery";
-/* eslint-disable */
 
 import DownloadService from "../services/DownloadService.js";
 import ExtractionService from "../services/ExtractionService.js";
@@ -776,11 +749,12 @@ export default {
         dictRemoveFile: "Clear File",
         timeout: 10000000,
       },
+      isSelected: 0,
       folderName: "",
       files: [],
       folders: [],
-      picked: "./files/A1_Main",
-      movePicked: "No Folder Selected",
+      picked: "./files",
+      moveDestination: "No Folder Selected",
       picked_File: "./files/A1_Main/no_file_selected.txt",
       fileSize: [],
       searchTyped: "",
@@ -795,72 +769,24 @@ export default {
   },
 
   methods: {
-    // Shows #folderCard
-    showFolderCard() {
-      document.getElementById("fileTable").style.visibility = "hidden";
-      document.getElementById("exampleTr").style.visibility = "hidden";
-      document.getElementById("folderCard").style.display = "block";
-      document.getElementById("folderCard").style.marginTop = "-80vh";
-      document.getElementById("btnDelete").style.opacity = 0.5;
-      document.getElementById("btnDelete").disabled = true;
+    hideFolderModal() {
+      this.$refs["folderModal"].hide();
+	  this.folderName = "";
     },
 
-    // Cancels and hides #folderCard
-    cancelNewFolder() {
-      document.getElementById("fileTable").style.visibility = "visible";
-      document.getElementById("exampleTr").style.visibility = "visible";
-      document.getElementById("folderCard").style.display = "none";
-      document.getElementById("btnDelete").style.opacity = 1;
-      document.getElementById("btnDelete").disabled = false;
+    hideMoveModal() {
+      this.$refs["moveModal"].hide();
+      $("#fileTable input:checkbox").prop("checked", false);
+      this.checkedObjects = [];
+      this.moveDestination = "No Folder Selected";
     },
 
-    // Shows #deleteCard
-    deleteClicked() {
-      document.getElementById("fileTable").style.visibility = "hidden";
-      document.getElementById("exampleTr").style.visibility = "hidden";
-      document.getElementById("deleteCard").style.display = "block";
-      document.getElementById("btnNewFolder").style.opacity = 0.5;
-      document.getElementById("btnNewFolder").disabled = true;
-    },
-
-    // Cancels and hides #deleteCard
-    cancelDelete() {
-      document.getElementById("fileTable").style.visibility = "visible";
-      document.getElementById("exampleTr").style.visibility = "visible";
-      document.getElementById("deleteCard").style.display = "none";
-      document.getElementById("btnNewFolder").disabled = false;
-      document.getElementById("btnNewFolder").style.opacity = 1;
+    hideDeleteModal() {
+      this.$refs["deleteModal"].hide();
       $("#fileTable input:checkbox").prop("checked", false);
       this.checkedObjects = [];
     },
 
-    // Shows #moveCard
-    moveClicked() {
-      document.getElementById("btnMoveClick").style.opacity = "0.5";
-      $("#btnMoveClick")
-        .prop("disabled", true)
-        .click(function() {
-          console.log("btnMoveClick disabled....");
-        });
-      document.getElementById("moveCard").style.display = "block";
-      document.getElementById("btnNewFolder").style.opacity = 0.5;
-      document.getElementById("exampleTr").style.visibility = "hidden";
-      document.getElementById("fileTable").style.visibility = "hidden";
-      document.getElementById("btnNewFolder").disabled = "true";
-    },
-
-    // Cancels and hides #moveCard
-    cancelMove() {
-      $("#fileTable input:checkbox").prop("checked", false);
-      this.checkedObjects = [];
-      document.getElementById("moveCard").style.display = "none";
-      document.getElementById("exampleTr").style.visibility = "visible";
-      document.getElementById("btnNewFolder").style.opacity = 1;
-      document.getElementById("btnNewFolder").disabled = false;
-      document.getElementById("fileTable").style.visibility = "visible";
-    },
-
-    // Creates a new folder
     newFolder() {
       axios
         .post("http://localhost:5000/newFolder", {
@@ -868,21 +794,15 @@ export default {
           folder_name: this.folderName,
         })
         .then((res) => {
-          document.getElementById("fileTable").style.visibility = "visible";
-          document.getElementById("exampleTr").style.visibility = "visible";
-          document.getElementById("folderCard").style.display = "none";
           this.getFolders();
           this.updateTable(this.picked);
-          document.getElementById("btnDelete").style.opacity = 1;
-          document.getElementById("btnDelete").disabled = false;
+		  this.hideFolderModal();
         })
         .catch((err) => {
           console.log(err);
         });
     },
 
-    // Call this function and pass a relative path to update
-    // the right-hand table after performing an action
     updateTable(path) {
       axios
         .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
@@ -923,7 +843,7 @@ export default {
 
     // Lists subdirectories when moving objects
     selectSwitchMove: function(e) {
-      this.movePicked = e;
+      this.moveDestination = e;
       axios
         .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
           path_name: e,
@@ -934,21 +854,11 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-
-      document.getElementById("btnMoveClick").style.opacity = "1";
-      $("#btnMoveClick")
-        .prop("disabled", false)
-        .click(function() {
-          console.log("btnMoveClick enabled...");
-        });
     },
 
     // Checks or unchecks an object and adds the path to the "checkedObjects" array.
     // Passes checked objects to the server via /sendZips
     toggleFile(file) {
-      document.getElementById("btnMoveClick").style.opacity = "1";
-      document.getElementById("btnMoveClick").disabled = "false";
-
       var $this = this;
       var selected = $this.checkedObjects;
 
@@ -973,7 +883,7 @@ export default {
     // Gets a list of all 'top-level' folders
     getFolders() {
       axios
-        .post(`http://localhost:5000/getAllMainFolders`, {})
+        .post(`http://localhost:5000/getAllMainFolders`)
         .then((response) => {
           this.folders = response.data;
         })
@@ -986,22 +896,16 @@ export default {
     // of all objects within that directory
     selectSwitchFiles: function(path, fileName, isDir) {
       this.picked_File = fileName;
-      document.getElementById("btnMove").style.opacity = "1";
-      document.getElementById("btnMove").disabled = false;
-
       axios
         .post("http://localhost:5000/sendPath", {
           sent_path: path,
           sent_file_name: fileName,
         })
         .then((res) => {
-          console.log(res.data.full_path);
           this.picked = res.data.full_path;
           this.currentDir = res.data.the_dir;
-
           if (isDir == true) {
             $("#fileTable input:checkbox").prop("checked", false);
-
             axios
               .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
                 path_name: this.picked,
@@ -1064,16 +968,12 @@ export default {
 
     // Deletes any checked objects in the checkedObjects array
     deleteFile() {
+      this.$refs["deleteModal"].hide();
       axios
         .post("http://localhost:5000/delete", {
           sent_path: this.checkedObjects,
         })
         .then((res) => {
-          document.getElementById("fileTable").style.visibility = "visible";
-          document.getElementById("exampleTr").style.visibility = "visible";
-          document.getElementById("deleteCard").style.display = "none";
-          document.getElementById("btnNewFolder").disabled = false;
-          document.getElementById("btnNewFolder").style.opacity = 1;
           this.checkedObjects = [];
           $("#fileTable input:checkbox").prop("checked", false);
           this.getFolders();
@@ -1093,10 +993,10 @@ export default {
       }
     },
 
-    extract() {
-      _extractionService.extract(this.picked).then((response) => {
-        this.updateTable(this.currentDir);
-      });
+    async extract() {
+     await _extractionService.extract(this.picked).then((res) =>{
+		  this.updateTable(this.currentDir)
+	 })
     },
 
     // Move all checked objects to a specified directory (the movePicked array)
@@ -1104,20 +1004,14 @@ export default {
       axios
         .post("http://localhost:5000/movefile", {
           org_path: this.checkedObjects,
-          dest_path: this.movePicked,
+          dest_path: this.moveDestination,
           file_name: this.checkedObjects,
         })
         .then((res) => {
           this.checkedObjects = [];
           $("#fileTable input:checkbox").prop("checked", false);
-          this.updateTable(this.movePicked);
-          this.picked = this.movePicked;
-          document.getElementById("moveCard").style.display = "none";
-          document.getElementById("btnNewFolder").style.disabled = "false";
-          document.getElementById("btnNewFolder").style.opacity = "1";
-          document.getElementById("moveCard").style.display = "none";
-          document.getElementById("exampleTr").style.visibility = "visible";
-          document.getElementById("fileTable").style.visibility = "visible";
+          this.updateTable(this.moveDestination);
+          this.hideMoveModal();
         })
         .catch((err) => {
           window.alert("Problem detected:" + res.status);
@@ -1179,24 +1073,6 @@ export default {
 #btnDownload {
   margin-top: 10px;
   margin-right: 5px;
-}
-
-#folderCard {
-  display: none;
-  border: 2px solid #e5e5e5;
-  z-index: 3000;
-}
-
-#deleteCard {
-  display: none;
-  border: 2px solid #e5e5e5;
-  margin-top: -60vh;
-}
-
-#moveCard {
-  display: none;
-  border: 2px solid #e5e5e5;
-  margin-top: -90vh;
 }
 
 #explorerSpan {
@@ -1291,16 +1167,15 @@ export default {
   margin-top: 10px;
   margin-bottom: 0px;
   border: 2px solid #dbdbdb;
-  text-indent: 18px;
   border-radius: 5px;
   color: black;
-  padding-left: 35px;
+  padding-left: 25px;
   outline: none;
 }
 
 .searchBar::placeholder {
   color: rgb(73, 73, 73) !important;
-  padding-left: 7px;
+  padding-left: 5px;
   font-family: "consolas";
 }
 
@@ -1377,14 +1252,6 @@ thead th {
   float: left;
 }
 
-#divStats {
-  display: none;
-}
-
-#divSettings {
-  display: none;
-}
-
 .label {
   display: inline-flex;
   align-items: center;
@@ -1394,6 +1261,20 @@ thead th {
 
 .label-text {
   margin-left: 16px;
+}
+
+#chipMovePicked {
+  margin-top: 7px;
+}
+
+#chipMoveDest {
+  font-family: "consolas";
+  margin-top: 10px;
+}
+
+#destInner {
+  font-weight: 600;
+  padding-right: 7px;
 }
 
 #entries {
@@ -1418,29 +1299,5 @@ thead th {
   #wrapper.toggled #sidebar-wrapper {
     margin-left: -15rem;
   }
-
-  #divStats {
-    display: none;
-  }
-
-  #divSettings {
-    display: none;
-  }
-}
-
-@media (max-width: 500px) {
-  #deleteCard {
-    margin-top: -130vh;
-  }
-
-  #moveCard {
-    margin-top: -130vh;
-  }
-
-  #pathReadout {
-    margin-top: -1px;
-  }
 }
 </style>
-
-function newFunction(data2) { this.files=data2; }
