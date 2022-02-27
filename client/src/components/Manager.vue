@@ -771,7 +771,7 @@ export default {
   methods: {
     hideFolderModal() {
       this.$refs["folderModal"].hide();
-	  this.folderName = "";
+      this.folderName = "";
     },
 
     hideMoveModal() {
@@ -796,7 +796,7 @@ export default {
         .then((res) => {
           this.getFolders();
           this.updateTable(this.picked);
-		  this.hideFolderModal();
+          this.hideFolderModal();
         })
         .catch((err) => {
           console.log(err);
@@ -985,18 +985,32 @@ export default {
     },
 
     downloadCheckedObjects() {
-      if (this.checkedObjects.length == 1) {
+      if (
+        this.checkedObjects.length == 1 &&
+        this.isAFile(this.checkedObjects.toString())
+      ) {
         _downloadService.downloadSingleFile(this.picked_File);
       }
-      if (this.checkedObjects.length > 1) {
+      else  {
         _downloadService.downloadMultiple();
       }
     },
 
+    isAFile(fileName) {
+      var isFile = fileName.substr(fileName.lastIndexOf("/") + 1);
+
+      if (isFile.indexOf(".") !== -1) {
+        return true;
+      } else {
+		  console.log("is not a file")
+        return false;
+      }
+    },
+
     async extract() {
-     await _extractionService.extract(this.picked).then((res) =>{
-		  this.updateTable(this.currentDir)
-	 })
+      await _extractionService.extract(this.picked).then((res) => {
+        this.updateTable(this.currentDir);
+      });
     },
 
     // Move all checked objects to a specified directory (the movePicked array)
