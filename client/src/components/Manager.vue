@@ -1002,7 +1002,6 @@ export default {
       if (isFile.indexOf(".") !== -1) {
         return true;
       } else {
-		  console.log("is not a file")
         return false;
       }
     },
