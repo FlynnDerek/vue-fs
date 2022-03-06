@@ -1,16 +1,19 @@
 <template>
   <div id="app">
-    <Manager msg="Vue-fs" />
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
 
 <script>
-import Manager from "./components/Manager.vue";
+import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    Manager,
-  },
-};
+    HelloWorld
+  }
+}
 </script>
+
+<style>
+</style>

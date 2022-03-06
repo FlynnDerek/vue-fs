@@ -1,28 +1,21 @@
 {
-  "name": "vue-fs",
-  "version": "0.9.0",
+  "name": "vuefs-package-tester",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vue-cli-service serve",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "bootstrap": "^4.5.3",
-    "bootstrap-vue": "^2.21.2",
-    "chokidar": "^3.5.2",
     "core-js": "^3.6.5",
-    "jquery": "^3.6.0",
-    "js-file-download": "^0.4.12",
     "vue": "^2.6.11",
-    "vue2-dropzone": "^3.6.0",
-    "vuetify": "^2.5.0"
+    "vuefs": "file:vuefs-1.0.0.tgz"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-babel": "~4.5.11",
+    "@vue/cli-plugin-eslint": "~4.5.11",
+    "@vue/cli-service": "~4.5.11",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
