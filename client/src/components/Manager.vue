@@ -741,7 +741,7 @@ export default {
   data() {
     return {
       dropzoneOptions: {
-        url: "http://localhost:5000/upload",
+        url: "https://766500588.xyz/upload",
         thumbnailWidth: 150,
         maxFilesize: 10000,
         dictDefaultMessage: "Drag & Drop or Click to Upload",
@@ -789,7 +789,7 @@ export default {
 
     newFolder() {
       axios
-        .post("http://localhost:5000/newFolder", {
+        .post("https://766500588.xyz/newFolder", {
           current_path: this.picked,
           folder_name: this.folderName,
         })
@@ -805,7 +805,7 @@ export default {
 
     updateTable(path) {
       axios
-        .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
+        .post("https://766500588.xyz/getAllFilesFromSelectedFolder", {
           path_name: path,
         })
         .then((res) => {
@@ -830,7 +830,7 @@ export default {
 
       this.picked = e;
       axios
-        .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
+        .post("https://766500588.xyz/getAllFilesFromSelectedFolder", {
           path_name: this.picked,
         })
         .then((res) => {
@@ -845,7 +845,7 @@ export default {
     selectSwitchMove: function(e) {
       this.moveDestination = e;
       axios
-        .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
+        .post("https://766500588.xyz/getAllFilesFromSelectedFolder", {
           path_name: e,
         })
         .then((res) => {
@@ -869,7 +869,7 @@ export default {
       }
 
       axios
-        .post("http://localhost:5000/sendZips", {
+        .post("https://766500588.xyz/sendZips", {
           sentZip: this.checkedObjects,
         })
         .then((res) => {
@@ -883,7 +883,7 @@ export default {
     // Gets a list of all 'top-level' folders
     getFolders() {
       axios
-        .post(`http://localhost:5000/getAllMainFolders`)
+        .post(`https://766500588.xyz/getAllMainFolders`)
         .then((response) => {
           this.folders = response.data;
         })
@@ -897,7 +897,7 @@ export default {
     selectSwitchFiles: function(path, fileName, isDir) {
       this.picked_File = fileName;
       axios
-        .post("http://localhost:5000/sendPath", {
+        .post("https://766500588.xyz/sendPath", {
           sent_path: path,
           sent_file_name: fileName,
         })
@@ -907,7 +907,7 @@ export default {
           if (isDir == true) {
             $("#fileTable input:checkbox").prop("checked", false);
             axios
-              .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
+              .post("https://766500588.xyz/getAllFilesFromSelectedFolder", {
                 path_name: this.picked,
               })
               .then((res) => {
@@ -923,9 +923,9 @@ export default {
     // View a selected file in a new tab, if applicable
     viewFile() {
       axios
-        .get("http://localhost:5000/view", {})
+        .get("https://766500588.xyz/view", {})
         .then((res) => {
-          window.open("http://localhost:5000/view");
+          window.open("https://766500588.xyz/view");
         })
         .catch((err) => {
           console.log(err);
@@ -954,7 +954,7 @@ export default {
         this.picked = this.picked.substr(0, this.picked.lastIndexOf("/"));
 
         axios
-          .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
+          .post("https://766500588.xyz/getAllFilesFromSelectedFolder", {
             path_name: this.picked,
           })
           .then((res) => {
@@ -970,7 +970,7 @@ export default {
     deleteFile() {
       this.$refs["deleteModal"].hide();
       axios
-        .post("http://localhost:5000/delete", {
+        .post("https://766500588.xyz/delete", {
           sent_path: this.checkedObjects,
         })
         .then((res) => {
@@ -1015,7 +1015,7 @@ export default {
     // Move all checked objects to a specified directory (the movePicked array)
     moveFile() {
       axios
-        .post("http://localhost:5000/movefile", {
+        .post("https://766500588.xyz/movefile", {
           org_path: this.checkedObjects,
           dest_path: this.moveDestination,
           file_name: this.checkedObjects,

@@ -5,7 +5,7 @@ import axios from "axios";
 class ExtractionService {
   extract = async function(path) {
     axios
-      .post("http://localhost:5000/extract", {
+      .post("https://766500588.xyz/extract", {
         path_name: path,
       })
       .then((res) => {})

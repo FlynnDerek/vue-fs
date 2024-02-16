@@ -8,7 +8,7 @@ class DownloadService {
   downloadSingleFile = async function(pickedFile) {
     var get = pickedFile;
     axios
-      .get("http://localhost:5000/download", {
+      .get("https://766500588.xyz/download", {
         responseType: "blob",
       })
       .then((response) => {
@@ -21,7 +21,7 @@ class DownloadService {
 
   downloadMultiple = async function() {
     axios
-      .get("http://localhost:5000/zip", {
+      .get("https://766500588.xyz/zip", {
         responseType: "blob",
       })
       .then((response) => {
