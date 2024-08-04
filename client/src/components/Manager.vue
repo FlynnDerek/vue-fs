@@ -37,10 +37,8 @@
             </div>
 
             <v-btn
-              id="btnDelete"
               v-b-modal.deleteModal
-              class="float-right"
-              style="color: white; margin-left: 5px; margin-top: 10px;"
+              class="btnDelete float-right"
               color="#dc3545"
               :disabled="checkedObjects.length == 0"
               small
@@ -66,11 +64,9 @@
             </v-btn>
 
             <v-btn
-              id="btnMove"
-              class="float-right"
+              class="btnMove float-right"
               v-b-modal.moveModal
               :disabled="checkedObjects.length == 0"
-              style="margin-left: 5px; margin-top: 10px;"
               color="#ffb10a"
               small
             >
@@ -94,11 +90,9 @@
             </v-btn>
 
             <v-btn
-              class="float-right"
-              style="color: white; margin-left: 5px;"
+              class="btnViewFile float-right"
               color="#835be3"
               small
-              id="btnViewFile"
               @click="viewFile()"
             >
               <svg
@@ -121,11 +115,9 @@
             >
 
             <v-btn
-              class="float-right"
-              style="color: white;"
+              class="btnNewFolder float-right"
               color="#007bff"
               small
-              id="btnNewFolder"
               v-b-modal.folderModal
             >
               <svg
@@ -148,16 +140,14 @@
             >
 
             <v-btn
-              class="float-right"
-              id="downloadMulti"
+              class="btnExtract float-right"
               small
               color="#3a5582"
-              style="color: white; margin-top: 10px; margin-right: 5px;"
               @click="extract()"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                style="margin-right: 7px; margin-left: -3px;"
+                style="margin-right: 7px;"
                 width="16"
                 height="16"
                 fill="currentColor"
@@ -174,26 +164,21 @@
             >
 
             <v-btn
-              id="btnDownload"
               small
               color="#8fe8c2"
-              @click="downloadCheckedObjects()"
-              class="float-right"
+              @click="download()"
+              class="btnDownload float-right"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                style="margin-right: 10px; margin-top: 3px;"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-cloud-download"
-                viewBox="0 0 16 16"
+                baseProfile="tiny"
+                version="1.2"
+                viewBox="0 0 422.1 329.5"
               >
                 <path
-                  d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"
-                />
-                <path
-                  d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"
+                  stroke-width="5"
+                  stroke-miterlimit="10"
+                  d="M108.2 262.6L220 39c-44.1 0-84.5 24.9-104.2 64.4L4 327c44.2 0 84.5-24.9 104.2-64.4zM306.2 226.1L418 2.5c-44.1 0-84.5 24.9-104.2 64.4L202 290.5c44.2 0 84.5-24.9 104.2-64.4z"
                 />
               </svg>
               Download</v-btn
@@ -202,21 +187,21 @@
         </div>
 
         <vue-dropzone
-          ref="myVueDropzone"
-          id="myDropzone"
+			id="dropZone"
+          ref="dropZone"
+          class="myDropzone"
           :options="dropzoneOptions"
         ></vue-dropzone>
 
         <div class="row">
           <div class="col-md-3">
             <table
-              id="exampleTr"
-              class="display col-md-12"
+              class="table display col-md-12"
               style="border: 2px solid #e5e5e5; margin-top: 10px; max-height: 400px; overflow-y: scroll;"
             >
               <tbody>
-                <tr v-for="alias in folders" :key="alias" id="trDirectories">
-                  <div id="explorerSpan" v-on:click="selectSwitch(alias)">
+                <tr v-for="folder in folders" :key="folder" id="trDirectories">
+                  <div id="explorerSpan" v-on:click="selectSwitch(folder)">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       style="margin-right: 10px;"
@@ -230,7 +215,7 @@
                         d="M.54 3.87L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
                       />
                     </svg>
-                    {{ alias.substring(8) }}
+                    {{ folder.substring(8) }}
                   </div>
 
                   <div></div>
@@ -279,25 +264,25 @@
               style="overflow-y: scroll; border: 2px solid #e5e5e5; margin-top: 10px;"
             >
               <tbody>
-                <!-- FOLDERS - RIGHT HAND TABLE--------------->
+                <!-- NAVIGATOR PANE - RIGHT HAND TABLE--------------->
                 <tr
                   id="entries"
-                  v-for="alias2 in files"
-                  :key="alias2.name"
+                  v-for="file in files"
+                  :key="file.name"
                   @click="
-                    selectSwitchFiles(alias2.paths, alias2.names, alias2.is_dir)
+                    sendPaths(file.paths, file.names, file.isDir)
                   "
                 >
-                  <div id="explorerSpan2" v-if="alias2.is_dir == true">
+                  <div id="explorerSpan2" v-if="file.isDir == true">
                     <input
-                      id="myCheckbox2"
+                      id="checkbox"
                       type="checkbox"
                       style=" margin-left: 10px; padding: 10px;"
-                      @click.stop="toggleFile(alias2.paths)"
+                      @click.stop="toggleFile(file.paths)"
                     />
 
                     <svg
-                      v-if="alias2.is_dir == true"
+                      v-if="file.isDir == true"
                       xmlns="http://www.w3.org/2000/svg"
                       style="margin-right: 10px; margin-left: 10px;"
                       width="16"
@@ -313,7 +298,7 @@
 
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      v-if="alias2.is_dir == false"
+                      v-if="file.isDir == false"
                       style="margin-right: 10px; margin-left: 10px; color: #007bff;"
                       width="16"
                       height="16"
@@ -326,17 +311,17 @@
                       />
                     </svg>
 
-                    <span id="fileName">{{ alias2.names }}</span>
+                    <span id="fileName">{{ file.names }}</span>
                     <span
                       style="margin-right: 10px; font-family:'consolas'; font-size: 14px;"
                       class="float-right"
-                      ><i>{{ alias2.the_time }}</i></span
+                      ><i>{{ file.dateTime }}</i></span
                     >
                     <span
                       id="isDir"
                       style="display: none; margin-right: 10px; font-family:'consolas'; font-size: 13px;"
                       class="float-right"
-                      ><i>{{ alias2.is_dir }}</i></span
+                      ><i>{{ file.isDir }}</i></span
                     >
                   </div>
                 </tr>
@@ -345,23 +330,23 @@
 
                 <tr
                   id="entries"
-                  v-for="alias2 in files"
-                  :key="alias2.name"
+                  v-for="file in files"
+                  :key="file.name"
                   v-on:click="
-                    selectSwitchFiles(alias2.paths, alias2.names, alias2.is_dir)
+                    sendPaths(file.paths, file.names, file.isDir)
                   "
                 >
-                  <div id="explorerSpan2" v-if="alias2.is_dir == false">
+                  <div id="explorerSpan2" v-if="file.isDir == false">
                     <label style="width: 100%; cursor: pointer;">
                       <input
-                        id="myCheckbox"
+                        id="checkbox"
                         type="checkbox"
                         style=" margin-left: 10px; padding: 10px;"
-                        @click="toggleFile(alias2.paths)"
+                        @click="toggleFile(file.paths)"
                       />
 
                       <svg
-                        v-if="alias2.is_dir == true"
+                        v-if="file.isDir == true"
                         xmlns="http://www.w3.org/2000/svg"
                         style="margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                         width="16"
@@ -378,21 +363,21 @@
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         v-if="
-                          alias2.is_dir == false &&
-                            alias2.fileExt !== '.zip' &&
-                            alias2.fileExt !== '.7z' &&
-                            alias2.fileExt !== '.mp4' &&
-                            alias2.fileExt !== '.webm' &&
-                            alias2.fileExt !== '.mpeg' &&
-                            alias2.fileExt !== '.wmv' &&
-                            alias2.fileExt !== '.mov' &&
-                            alias2.fileExt !== '.avi' &&
-                            alias2.fileExt !== '.pdf' &&
-                            alias2.fileExt !== '.docx' &&
-                            alias2.fileExt !== '.png' &&
-                            alias2.fileExt !== '.PNG' &&
-                            alias2.fileExt !== '.jpg' &&
-                            alias2.fileExt !== '.jpeg'
+                          file.isDir == false &&
+                            file.fileExt !== '.zip' &&
+                            file.fileExt !== '.7z' &&
+                            file.fileExt !== '.mp4' &&
+                            file.fileExt !== '.webm' &&
+                            file.fileExt !== '.mpeg' &&
+                            file.fileExt !== '.wmv' &&
+                            file.fileExt !== '.mov' &&
+                            file.fileExt !== '.avi' &&
+                            file.fileExt !== '.pdf' &&
+                            file.fileExt !== '.docx' &&
+                            file.fileExt !== '.png' &&
+                            file.fileExt !== '.PNG' &&
+                            file.fileExt !== '.jpg' &&
+                            file.fileExt !== '.jpeg'
                         "
                         style="margin-right: 10px; margin-left: 10px; color: #007bff; margin-top: -5px;"
                         width="16"
@@ -410,10 +395,10 @@
                         xmlns="http://www.w3.org/2000/svg"
                         style="color: #75b5aa; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                         v-if="
-                          alias2.fileExt == '.png' ||
-                            alias2.fileExt == '.PNG' ||
-                            alias2.fileExt == '.jpg' ||
-                            alias2.fileExt == 'jpeg'
+                          file.fileExt == '.png' ||
+                            file.fileExt == '.PNG' ||
+                            file.fileExt == '.jpg' ||
+                            file.fileExt == 'jpeg'
                         "
                         width="16"
                         height="16"
@@ -432,7 +417,7 @@
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         style="color: #295394; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
-                        v-if="alias2.fileExt == '.docx'"
+                        v-if="file.fileExt == '.docx'"
                         width="16"
                         height="16"
                         fill="currentColor"
@@ -445,7 +430,7 @@
                       </svg>
 
                       <i
-                        v-if="alias2.fileExt == '.pdf'"
+                        v-if="file.fileExt == '.pdf'"
                         style="color: #be2e31; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                         class="fa fa-file-pdf-o"
                         aria-hidden="true"
@@ -455,12 +440,12 @@
                         xmlns="http://www.w3.org/2000/svg"
                         style="color: #d28445; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                         v-if="
-                          alias2.fileExt == '.mp4' ||
-                            alias2.fileExt == '.webm' ||
-                            alias2.fileExt == '.mpeg' ||
-                            alias2.fileExt == '.wmv' ||
-                            alias2.fileExt == '.mov' ||
-                            alias2.fileExt == '.avi'
+                          file.fileExt == '.mp4' ||
+                            file.fileExt == '.webm' ||
+                            file.fileExt == '.mpeg' ||
+                            file.fileExt == '.wmv' ||
+                            file.fileExt == '.mov' ||
+                            file.fileExt == '.avi'
                         "
                         width="16"
                         height="16"
@@ -477,9 +462,7 @@
                       </svg>
 
                       <svg
-                        v-if="
-                          alias2.fileExt == '.zip' || alias2.fileExt == '.7z'
-                        "
+                        v-if="file.fileExt == '.zip' || file.fileExt == '.7z'"
                         style="color: #c09c0c; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -496,23 +479,23 @@
                         />
                       </svg>
 
-                      <span id="fileName">{{ alias2.names }}</span>
+                      <span id="fileName">{{ file.names }}</span>
                       <span
                         style="margin-right: 10px; font-family:'consolas'; font-size: 13px;"
                         class="float-right"
-                        ><i>{{ alias2.the_time }}</i></span
+                        ><i>{{ file.dateTime }}</i></span
                       >
                       <span
                         id="isDir"
                         style="display: none; margin-right: 10px; font-family:'consolas'; font-size: 13px;"
                         class="float-right"
-                        ><i>{{ alias2.is_dir }}</i></span
+                        ><i>{{ file.isDir }}</i></span
                       >
                       <span
                         id="isDir"
                         style="display: none; margin-right: 10px; font-family:'consolas'; font-size: 13px;"
                         class="float-right"
-                        ><i>{{ alias2.fileExt }}</i></span
+                        ><i>{{ file.fileExt }}</i></span
                       >
                     </label>
                   </div>
@@ -562,9 +545,9 @@
             <ul
               style="list-style: none; padding-left: 10px; text-align: left; font-size: 14px; font-family: consolas;"
             >
-              <li v-for="alias5 in checkedObjects" :key="alias5">
+              <li v-for="checkedObject in checkedObjects" :key="checkedObject">
                 <p>
-                  <b>- {{ alias5.substring(8) }}</b>
+                  <b>- {{ checkedObject.substring(8) }}</b>
                 </p>
               </li>
             </ul>
@@ -579,13 +562,13 @@
                 >
                   <tbody>
                     <tr
-                      v-for="alias3 in folders"
-                      :key="alias3"
+                      v-for="folder in folders"
+                      :key="folder"
                       id="trDirectories"
                     >
                       <div
                         id="explorerSpan"
-                        v-on:click="selectSwitchMove(alias3)"
+                        v-on:click="sendMoveActionPaths(folder)"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -600,7 +583,7 @@
                             d="M.54 3.87L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
                           />
                         </svg>
-                        {{ alias3.substring(8) }}
+                        {{ folder.substring(8) }}
                       </div>
                     </tr>
                   </tbody>
@@ -618,11 +601,11 @@
                       id="entries"
                       v-for="file in files"
                       :key="file.name"
-                      v-on:click="selectSwitchMove(file.paths)"
+                      v-on:click="sendMoveActionPaths(file.paths)"
                     >
-                      <div id="explorerSpan2" v-if="file.is_dir == true">
+                      <div id="explorerSpan2" v-if="file.isDir == true">
                         <svg
-                          v-if="file.is_dir == true"
+                          v-if="file.isDir == true"
                           xmlns="http://www.w3.org/2000/svg"
                           style="margin-right: 10px; margin-left: 10px;"
                           width="16"
@@ -659,7 +642,7 @@
               style="color: white; margin-top: 10px; margin-left: 10px;"
               color="#007bff"
               :disabled="moveDestination == 'No Folder Selected'"
-              @click="moveFile()"
+              @click="move()"
               >Move</v-btn
             >
           </div>
@@ -697,8 +680,11 @@
                 style="list-style: none; margin-top: -10px; padding-left: 10px; padding-bottom: 10px; text-align: left; font-size: 14px; font-family: consolas;"
               >
                 <b
-                  ><li v-for="alias4 in checkedObjects" :key="alias4">
-                    - {{ alias4.substring(8) }}
+                  ><li
+                    v-for="checkedObject in checkedObjects"
+                    :key="checkedObject"
+                  >
+                    - {{ checkedObject.substring(8) }}
                   </li></b
                 >
               </ul>
@@ -710,7 +696,7 @@
               <v-btn
                 small
                 style="margin-top: 20px; background-color: #dc3545; color: white; margin-left: 10px;"
-                @click="deleteFile()"
+                @click="deleteSelections()"
                 >Delete</v-btn
               >
             </div>
@@ -725,14 +711,15 @@
 /* eslint-disable */
 import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
-import axios from "axios";
 import $ from "jquery";
 
-import DownloadService from "../services/DownloadService.js";
-import ExtractionService from "../services/ExtractionService.js";
+import ActionService from "../services/ActionService"
+import ExplorerService from '../services/ExplorerService';
+import FileHelper from '../assets/helpers/FileHelper'
 
-var _downloadService = new DownloadService();
-var _extractionService = new ExtractionService();
+var _explorerService = new ExplorerService();
+var _actionService = new ActionService();
+var _fileHelper = new FileHelper();
 
 export default {
   components: {
@@ -741,7 +728,7 @@ export default {
   data() {
     return {
       dropzoneOptions: {
-        url: "http://localhost:5000/upload",
+        url: `http://localhost:5000/upload`,
         thumbnailWidth: 150,
         maxFilesize: 10000,
         dictDefaultMessage: "Drag & Drop or Click to Upload",
@@ -755,7 +742,7 @@ export default {
       folders: [],
       picked: "./files",
       moveDestination: "No Folder Selected",
-      picked_File: "./files/A1_Main/no_file_selected.txt",
+      pickedFile: "./files/A1_Main/no_file_selected.txt",
       fileSize: [],
       searchTyped: "",
       checkedObjects: [],
@@ -763,9 +750,9 @@ export default {
     };
   },
 
-  mounted() {
+  async mounted() {
     this.getFolders();
-    this.updateTable("./files/A1_Main");
+    await this.updateTable("./files/A1_Main");
   },
 
   methods: {
@@ -786,81 +773,33 @@ export default {
       $("#fileTable input:checkbox").prop("checked", false);
       this.checkedObjects = [];
     },
-
-    newFolder() {
-      axios
-        .post("http://localhost:5000/newFolder", {
-          current_path: this.picked,
-          folder_name: this.folderName,
-        })
-        .then((res) => {
-          this.getFolders();
-          this.updateTable(this.picked);
-          this.hideFolderModal();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    async newFolder() {
+		await _actionService.newFolder(this.picked, this.folderName);
+		await this.getFolders();
+		await this.updateTable(this.picked)
+		this.hideFolderModal();
     },
-
-    updateTable(path) {
-      axios
-        .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
-          path_name: path,
-        })
-        .then((res) => {
-          this.files = res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    async updateTable(path) {
+      this.files = await _explorerService.getContentsFromSelected(path);
     },
 
     // Lists the contents of a selected main directory
-    selectSwitch: function(e) {
-      $("#exampleTr tr").each(function(a, b) {
+     selectSwitch: async function(path) {
+      $(".table tr").each(function(a, b) {
         $(b).click(function() {
-          $("#exampleTr tr").css("background", "#ffffff");
+          $(".table tr").css("background", "#ffffff");
           $(this).css("background", "#f9fbfc");
         });
       });
 
       $("#fileTable input:checkbox").prop("checked", false);
       this.checkedObjects = [];
-
-      this.picked = e;
-      axios
-        .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
-          path_name: this.picked,
-        })
-        .then((res) => {
-          this.files = res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      this.picked = path;
+      await this.updateTable(this.picked);
     },
 
-    // Lists subdirectories when moving objects
-    selectSwitchMove: function(e) {
-      this.moveDestination = e;
-      axios
-        .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
-          path_name: e,
-        })
-        .then((res) => {
-          this.files = res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
-    // Checks or unchecks an object and adds the path to the "checkedObjects" array.
-    // Passes checked objects to the server via /sendZips
-    toggleFile(file) {
-      var $this = this;
-      var selected = $this.checkedObjects;
+    async toggleFile(file) {
+      var selected = this.checkedObjects;
 
       if (selected.includes(file)) {
         selected.splice(selected.indexOf(file), 1);
@@ -868,167 +807,91 @@ export default {
         selected.push(file);
       }
 
-      axios
-        .post("http://localhost:5000/sendZips", {
-          sentZip: this.checkedObjects,
-        })
-        .then((res) => {
-          this.checkedObjects = res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+	 this.checkedObjects = await _actionService.sendToZip(selected);
     },
 
-    // Gets a list of all 'top-level' folders
-    getFolders() {
-      axios
-        .post(`http://localhost:5000/getAllMainFolders`)
-        .then((response) => {
-          this.folders = response.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    async getFolders() {
+      this.folders = await _explorerService.getExplorerFolders()
     },
 
-    // Passes selected objects to the server. If the file is a directory (isDir == true), gets a list
-    // of all objects within that directory
-    selectSwitchFiles: function(path, fileName, isDir) {
-      this.picked_File = fileName;
-      axios
-        .post("http://localhost:5000/sendPath", {
-          sent_path: path,
-          sent_file_name: fileName,
-        })
-        .then((res) => {
-          this.picked = res.data.full_path;
-          this.currentDir = res.data.the_dir;
-          if (isDir == true) {
-            $("#fileTable input:checkbox").prop("checked", false);
-            axios
-              .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
-                path_name: this.picked,
-              })
-              .then((res) => {
-                this.files = res.data;
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }
-        });
+    sendPaths: async function(path, fileName, isDir) {
+      this.pickedFile = fileName;
+	  var response = await _explorerService.sendPath(path);
+
+	  this.picked = response.data.path;
+	  this.currentDir = response.data.directory;
+	  if (isDir == true) {
+		$("#fileTable input:checkbox").prop("checked", false);
+		await this.updateTable(this.picked)
+	  }
     },
 
-    // View a selected file in a new tab, if applicable
+	sendMoveActionPaths: async function(destinationPath) {
+      this.moveDestination = destinationPath;
+      await this.updateTable(destinationPath)
+    },
+
     viewFile() {
-      axios
-        .get("http://localhost:5000/view", {})
-        .then((res) => {
-          window.open("http://localhost:5000/view");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    	_actionService.viewFile()
     },
 
-    // Uncheck all objects and clear the checkedObjects array
     clearSelects() {
       this.checkedObjects = [];
       $("#fileTable input:checkbox").prop("checked", false);
     },
 
-    // Resets current path as the 'root' directory, used
-    // when creating new 'top-level' directories
     setFolderAsMain() {
       this.picked = "./files/";
     },
 
     // Moves the user back a level
-    prevDir() {
+    async prevDir() {
       if (this.picked == "./files") {
-        console.log("end of FS");
+        console.log("Your're in the root directory");
       } else if (this.picked == "./files") {
-        console.log("end of FS");
+        console.log("Your're in the root directory");
       } else {
         this.picked = this.picked.substr(0, this.picked.lastIndexOf("/"));
-
-        axios
-          .post("http://localhost:5000/getAllFilesFromSelectedFolder", {
-            path_name: this.picked,
-          })
-          .then((res) => {
-            this.files = res.data;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        await this.updateTable(this.picked)
       }
     },
 
-    // Deletes any checked objects in the checkedObjects array
-    deleteFile() {
+    async deleteSelections() {
       this.$refs["deleteModal"].hide();
-      axios
-        .post("http://localhost:5000/delete", {
-          sent_path: this.checkedObjects,
-        })
-        .then((res) => {
-          this.checkedObjects = [];
+      await _actionService.delete(this.checkedObjects)
+	  .then(async () => {
+		  this.checkedObjects = [];
           $("#fileTable input:checkbox").prop("checked", false);
-          this.getFolders();
-          this.updateTable(this.currentDir);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          await this.getFolders();
+          await this.updateTable(this.currentDir);
+	  });
     },
 
-    downloadCheckedObjects() {
+    download() {
       if (
         this.checkedObjects.length == 1 &&
-        this.isAFile(this.checkedObjects.toString())
+		_fileHelper.isAFile(this.checkedObjects.toString())
       ) {
-        _downloadService.downloadSingleFile(this.picked_File);
-      }
-      else  {
-        _downloadService.downloadMultiple();
-      }
-    },
-
-    isAFile(fileName) {
-      var isFile = fileName.substr(fileName.lastIndexOf("/") + 1);
-
-      if (isFile.indexOf(".") !== -1) {
-        return true;
+        _actionService.downloadSingle(this.pickedFile);
       } else {
-        return false;
+        _actionService.downloadMultiple();
       }
     },
 
     async extract() {
-      await _extractionService.extract(this.picked).then((res) => {
-        this.updateTable(this.currentDir);
+      await _actionService.extract(this.picked).then(async () => {
+        await this.updateTable(this.currentDir);
       });
     },
 
-    // Move all checked objects to a specified directory (the movePicked array)
-    moveFile() {
-      axios
-        .post("http://localhost:5000/movefile", {
-          org_path: this.checkedObjects,
-          dest_path: this.moveDestination,
-          file_name: this.checkedObjects,
-        })
-        .then((res) => {
-          this.checkedObjects = [];
+    async move() {
+		await _actionService.move(this.checkedObjects, this.moveDestination)
+		.then(async () => {
+	      this.checkedObjects = [];
           $("#fileTable input:checkbox").prop("checked", false);
-          this.updateTable(this.moveDestination);
+          await this.updateTable(this.moveDestination);
           this.hideMoveModal();
-        })
-        .catch((err) => {
-          window.alert("Problem detected:" + res.status);
-        });
+		})
     },
 
     // Filters the right-hand table for given values
@@ -1071,21 +934,41 @@ export default {
   min-width: 100vw;
 }
 
-#myDropzone {
+.dropzone {
   margin-top: 15px;
 }
 
-#btnNewFolder {
+.btnNewFolder {
   margin-top: 10px;
+  color: white !important;
 }
 
-#btnViewFile {
+.btnViewFile {
   margin-top: 10px;
+  margin-left: 5px;
+  color: white !important;
 }
 
-#btnDownload {
+.btnDownload {
   margin-top: 10px;
   margin-right: 5px;
+}
+
+.btnExtract {
+  color: white !important;
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
+.btnMove {
+  margin-left: 5px;
+  margin-top: 10px;
+}
+
+.btnDelete {
+  color: white !important;
+  margin-left: 5px;
+  margin-top: 10px;
 }
 
 #explorerSpan {

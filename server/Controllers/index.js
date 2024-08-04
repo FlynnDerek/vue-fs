@@ -13,17 +13,15 @@ const Logger = require("../Utilities/Logger");
 
 const router = Router();
 
-let my_path;
+let currentPath;
+let directoryPath;
 let myZip2;
-// const my_file1;
-let folder_path;
 
 // Responds with the relative path of a selected directory or file
 router.post("/sendPath", (req, res) => {
-  my_path = req.body.sent_path;
-  // my_file1 = req.body.sent_file;
-  const isDir = path.dirname(my_path);
-  res.send({ full_path: my_path, the_dir: isDir });
+  currentPath = req.body.path ;
+  const isDir = path.dirname(currentPath);
+  res.send({ path: currentPath, directory : isDir });
 });
 
 // Uploads files to the file directory
@@ -33,7 +31,7 @@ router.post("/upload", (req, res) => {
   }
   const myFile = req.files.file;
 
-  myFile.mv(`${folder_path}/${myFile.name}`, (err) => {
+  myFile.mv(`${directoryPath}/${myFile.name}`, (err) => {
     if (err) {
       Logger.Error(err);
       return res.status(500).send({ msg: "Error occured" });
@@ -57,8 +55,8 @@ router.post("/getAllMainFolders", (req, res) => {
 
 // List all files and directories from a selected directory
 router.post("/getAllFilesFromSelectedFolder", (req, res) => {
-  const dirPath = req.body.path_name;
-  folder_path = dirPath;
+  const dirPath = req.body.path;
+  directoryPath = dirPath;
   let result = [];
   let globalDir;
 
@@ -71,14 +69,14 @@ router.post("/getAllFilesFromSelectedFolder", (req, res) => {
       return {
         paths: `${globalDir}/${filePath}`,
         names: filePath,
-        the_time: DateTime.lastUpdatedDate(`${globalDir}/${filePath}`),
-        is_dir: Path.isDir(`${globalDir}/${filePath}`),
+        dateTime: DateTime.lastUpdatedDate(`${globalDir}/${filePath}`),
+        isDir: Path.isDir(`${globalDir}/${filePath}`),
         fileExt: path.extname(`${globalDir}/${filePath}`),
       };
     });
     res.send(
       result.sort((a, b) => {
-        return new Date(b.the_time) - new Date(a.the_time);
+        return new Date(b.dateTime) - new Date(a.dateTime);
       })
     );
   });
@@ -86,21 +84,21 @@ router.post("/getAllFilesFromSelectedFolder", (req, res) => {
 
 // Create new folder
 router.post("/newFolder", (req, res) => {
-  const currDir = req.body.current_path;
-  const newDir = `${currDir}/${req.body.folder_name}`;
+  const currDir = req.body.currentPath;
+  const newDir = `${currDir}/${req.body.folderName}`;
 
   if (Path.isDir(currDir)) {
     if (!fs.existsSync(newDir)) {
       fs.mkdirSync(newDir);
     }
   } else {
-    const cleanDir = `${path.parse(currDir).dir}/${req.body.folder_name}`;
+    const cleanDir = `${path.parse(currDir).dir}/${req.body.folderName}`;
     if (!fs.existsSync(cleanDir)) {
       fs.mkdirSync(cleanDir);
     }
   }
   Logger.Event(
-    `A new folder '${req.body.folder_name}' was created on ${DateTime.Now()}`
+    `A new folder '${req.body.folderName}' was created on ${DateTime.Now()}`
   );
   return res.sendStatus(200);
 });
@@ -114,23 +112,23 @@ router.post("/sendZips", (req, res) => {
 
 // Download a file
 router.get("/download", (req, res) => {
-  const selectedPath = my_path;
-  Logger.Event(`Download: ${my_path}`);
+  const selectedPath = currentPath;
+  Logger.Event(`Download: ${currentPath}`);
   const file = path.join(cwd(), selectedPath.substring(1));
   res.sendFile(file);
 });
 
 // View a file
 router.get("/view", (req, res) => {
-  res.sendFile(my_path, { root: cwd() });
+  res.sendFile(currentPath, { root: cwd() });
 });
 
 // Delete selected files and directories
 router.post("/delete", (req, res) => {
-  const thePath = req.body.sent_path;
+  const paths = req.body.path;
 
-  thePath.forEach((filepath) => {
-    rimraf(filepath, (err) => {
+  paths.forEach((path) => {
+    rimraf(path, (err) => {
       if (err) return Logger.Error(err);
 
       Logger.Event("Delete successful");
@@ -141,8 +139,8 @@ router.post("/delete", (req, res) => {
 
 // Move selected files and directories
 router.post("/movefile", (req, res) => {
-  const org = req.body.org_path;
-  const dest = req.body.dest_path;
+  const org = req.body.origin;
+  const dest = req.body.destination;
 
   for (let i = org.length - 1; i >= 0; i--) {
     const file = org[i];
@@ -188,7 +186,7 @@ router.get("/zip", (req, res) => {
 
 // Extract selected .zip file *Please note only .zip files are supported for now
 router.post("/extract", async (req, res) => {
-  const src = req.body.path_name;
+  const src = req.body.path;
   const dest = path.dirname(src);
 
   try {
