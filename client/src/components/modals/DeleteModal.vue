@@ -1,68 +1,112 @@
 <template>
-  <b-modal
-    ref="deleteModal"
-    id="deleteModal"
-    hide-footer
-    scrollable
-    title="Delete"
-  >
-    <div class="d-block text-center">
-      <svg
-        style="text-align: center; color: #dc3545;"
-        xmlns="http://www.w3.org/2000/svg"
-        width="48"
-        height="48"
-        fill="currentColor"
-        class="bi bi-exclamation-triangle"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"
-        />
-        <path
-          d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"
-        />
-      </svg>
-      <p style="text-align: center; margin-top: 10px;">
-        Are you sure you want to delete the following?
-      </p>
-      <div class="mx-auto col-md-12">
-        <ul
-          style="list-style: none; margin-top: -10px; padding-left: 10px; padding-bottom: 10px; text-align: left; font-size: 14px; font-family: consolas;"
-        >
-          <b
-            ><li v-for="checkedObject in checkedObjects" :key="checkedObject">
-              - {{ checkedObject.substring(8) }}
-            </li></b
-          >
-        </ul>
-      </div>
-      <div class="float-right">
-        <v-btn small style="margin-top: 20px;" @click="hideDeleteModal()"
-          >Cancel</v-btn
-        >
+  <div>
+    <v-dialog v-model="dialog" width="600" transition="dialog-top-transition">
+      <template v-slot:activator="{ on, attrs }">
         <v-btn
+          class="deleteBtn"
+          color="#dc3545"
           small
-          style="margin-top: 20px; background-color: #dc3545; color: white; margin-left: 10px;"
-          @click="deleteFile()"
-          >Delete</v-btn
+          v-bind="attrs"
+          v-on="on"
+          :disabled="selectedObjects.length == 0"
         >
-      </div>
-    </div>
-  </b-modal>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            style="margin-right: 10px;"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-trash"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+            />
+            <path
+              fill-rule="evenodd"
+              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+            />
+          </svg>
+          Delete
+        </v-btn>
+      </template>
+
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Delete
+        </v-card-title>
+
+        <v-card-text>
+          Are you sure you want to delete the following?
+        </v-card-text>
+
+        <div class="mx-auto col-md-12">
+          <ul class="listToDelete">
+            <b
+              ><li
+                v-for="selectedObject in selectedObjects"
+                :key="selectedObject"
+              >
+                - {{ selectedObject.substring(8) }}
+              </li></b
+            >
+          </ul>
+        </div>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="deleteBtn" color="#dc3545" @click="_delete(), dialog = false">
+            Delete
+          </v-btn>
+          <v-btn class="cancelBtn" @click="dialog = false">
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
 export default {
-	data: {
-
-	},
-	methods: {
-		mounted() {
-			
-		}
+  props: ["selectedObjects"],
+  created: function() {
+    console.log("data from parent component:");
+    console.log(this.selectedObjects);
+  },
+  data() {
+    return {
+      dialog: false,
+    };
+  },
+  methods: {
+	_delete() {
+		this.$emit('delete');
+		this.dialog = false;
 	}
+
+  }
 };
 </script>
 
-<style></style>
+<style>
+.deleteBtn {
+  color: white !important;
+}
+
+.cancelBtn {
+	margin-left: 8px;
+}
+
+.listToDelete {
+  list-style: none;
+  margin-top: -10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  text-align: left;
+  font-size: 14px;
+  font-family: consolas;
+}
+</style>
