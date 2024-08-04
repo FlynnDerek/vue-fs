@@ -10,7 +10,6 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
-    "bootstrap-vue": "^2.21.2",
     "chokidar": "^3.5.2",
     "core-js": "^3.6.5",
     "jquery": "^3.6.0",
