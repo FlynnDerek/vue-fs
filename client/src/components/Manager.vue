@@ -40,31 +40,9 @@
 				<DeleteModal :selectedObjects="checkedObjects" @delete="deleteSelections()" />
 			</div>
 
-            <v-btn
-              class="btnMove float-right"
-              v-b-modal.moveModal
-              :disabled="checkedObjects.length == 0"
-              color="#ffb10a"
-              small
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                style="margin-right: 10px;"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-folder-symlink"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="m11.798 8.271-3.182 1.97c-.27.166-.616-.036-.616-.372V9.1s-2.571-.3-4 2.4c.571-4.8 3.143-4.8 4-4.8v-.769c0-.336.346-.538.616-.371l3.182 1.969c.27.166.27.576 0 .742z"
-                />
-                <path
-                  d="m.5 3 .04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14h10.348a2 2 0 0 0 1.991-1.819l.637-7A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm.694 2.09A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09l-.636 7a1 1 0 0 1-.996.91H2.826a1 1 0 0 1-.995-.91l-.637-7zM6.172 2a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"
-                />
-              </svg>
-              Move
-            </v-btn>
+            <div data-app class="btnDelete float-right">
+				<MoveModal :selectedObjects="checkedObjects" :files="files" :folders="folders" @move="move" />
+			</div>
 
             <v-btn
               class="btnViewFile float-right"
@@ -157,8 +135,8 @@
               style="border: 2px solid #e5e5e5; margin-top: 10px; max-height: 400px; overflow-y: scroll;"
             >
               <tbody>
-                <tr v-for="folder in folders" :key="folder" id="trDirectories">
-                  <div id="explorerSpan" v-on:click="selectSwitch(folder)">
+                <tr v-for="folder in folders" :key="folder" class="trDirectories">
+                  <div class="explorerSpan" v-on:click="selectSwitch(folder)">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       style="margin-right: 10px;"
@@ -223,14 +201,14 @@
               <tbody>
                 <!-- NAVIGATOR PANE - RIGHT HAND TABLE--------------->
                 <tr
-                  id="entries"
+                  class="entries"
                   v-for="file in files"
                   :key="file.name"
                   @click="
                     sendPaths(file.paths, file.names, file.isDir)
                   "
                 >
-                  <div id="explorerSpan2" v-if="file.isDir == true">
+                  <div class="explorerSpan2" v-if="file.isDir == true">
                     <input
                       id="checkbox"
                       type="checkbox"
@@ -286,14 +264,14 @@
                 <!-- FILES - RIGHT HAND TABLE ------------------------------>
 
                 <tr
-                  id="entries"
+                  class="entries"
                   v-for="file in files"
                   :key="file.name"
                   v-on:click="
                     sendPaths(file.paths, file.names, file.isDir)
                   "
                 >
-                  <div id="explorerSpan2" v-if="file.isDir == false">
+                  <div class="explorerSpan2" v-if="file.isDir == false">
                     <label style="width: 100%; cursor: pointer;">
                       <input
                         id="checkbox"
@@ -461,121 +439,6 @@
             </table>
           </div>
         </div>
-
-        <!-- Move items modal -->
-        <b-modal
-          ref="moveModal"
-          id="moveModal"
-          hide-footer
-          scrollable
-          title="Move"
-        >
-          <div class="d-block text-center">
-            <ul
-              style="list-style: none; padding-left: 10px; text-align: left; font-size: 14px; font-family: consolas;"
-            >
-              <li v-for="checkedObject in checkedObjects" :key="checkedObject">
-                <p>
-                  <b>- {{ checkedObject.substring(8) }}</b>
-                </p>
-              </li>
-            </ul>
-          </div>
-
-          <div class="d-block">
-            <div class="row">
-              <div class="col-md-6">
-                <table
-                  id="tableMove"
-                  style="border: 2px solid #e5e5e5; margin-top: 10px; max-height: 400px; overflow-y: scroll;"
-                >
-                  <tbody>
-                    <tr
-                      v-for="folder in folders"
-                      :key="folder"
-                      id="trDirectories"
-                    >
-                      <div
-                        id="explorerSpan"
-                        v-on:click="sendMoveActionPaths(folder)"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          style="margin-right: 10px;"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          class="bi bi-folder"
-                          viewBox="0 0 16 16"
-                        >
-                          <path
-                            d="M.54 3.87L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
-                          />
-                        </svg>
-                        {{ folder.substring(8) }}
-                      </div>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="col-md-6">
-                <table
-                  id="fileTable"
-                  class="display col-md-12"
-                  style="overflow-y: scroll; border: 2px solid #e5e5e5; margin-top: 10px;"
-                >
-                  <tbody>
-                    <tr
-                      id="entries"
-                      v-for="file in files"
-                      :key="file.name"
-                      v-on:click="sendMoveActionPaths(file.paths)"
-                    >
-                      <div id="explorerSpan2" v-if="file.isDir == true">
-                        <svg
-                          v-if="file.isDir == true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          style="margin-right: 10px; margin-left: 10px;"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          class="bi bi-folder"
-                          viewBox="0 0 16 16"
-                        >
-                          <path
-                            d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
-                          />
-                        </svg>
-                        <span id="fileName">{{ file.names }}</span>
-                      </div>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <p style="font-size: 17px;">
-            <v-chip id="chipMoveDest" outlined text color="#1d5df9"
-              ><span id="destInner">Destination: </span
-              >{{ moveDestination }}</v-chip
-            >
-          </p>
-          <div class="float-right">
-            <v-btn style="margin-top: 10px;" @click="hideMoveModal()"
-              >Cancel</v-btn
-            >
-            <v-btn
-              id="btnMoveClick"
-              style="color: white; margin-top: 10px; margin-left: 10px;"
-              color="#007bff"
-              :disabled="moveDestination == 'No Folder Selected'"
-              @click="move()"
-              >Move</v-btn
-            >
-          </div>
-        </b-modal>
       </div>
     </div>
   </div>
@@ -584,8 +447,9 @@
 <script>
 /* eslint-disable */
 import vue2Dropzone from "vue2-dropzone";
-import DeleteModal from "./views/DeleteModal.vue"
-import NewFolderModal from "./views/NewFolderModal.vue"
+import DeleteModal from "./views/modals/DeleteModal.vue"
+import MoveModal from "./views/modals/MoveModal.vue"
+import NewFolderModal from "./views/modals/NewFolderModal.vue"
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
 import $ from "jquery";
 
@@ -600,6 +464,7 @@ var _fileHelper = new FileHelper();
 export default {
   components: {
 	DeleteModal,
+	MoveModal,
 	NewFolderModal,
     vueDropzone: vue2Dropzone,
   },
@@ -694,11 +559,6 @@ export default {
 	  }
     },
 
-	sendMoveActionPaths: async function(destinationPath) {
-      this.moveDestination = destinationPath;
-      await this.updateTable(destinationPath)
-    },
-
     viewFile() {
     	_actionService.viewFile()
     },
@@ -751,13 +611,12 @@ export default {
       });
     },
 
-    async move() {
-		await _actionService.move(this.checkedObjects, this.moveDestination)
+    async move(destinationPath) {
+		await _actionService.move(this.checkedObjects, destinationPath)
 		.then(async () => {
 	      this.checkedObjects = [];
           $("#fileTable input:checkbox").prop("checked", false);
-          await this.updateTable(this.moveDestination);
-          this.hideMoveModal();
+          await this.updateTable(destinationPath);
 		})
     },
 
@@ -837,7 +696,7 @@ export default {
   margin-top: 10px;
 }
 
-#explorerSpan {
+.explorerSpan {
   width: 95%;
   cursor: pointer;
   margin-left: 10px;
@@ -848,7 +707,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-#explorerSpan2 {
+.explorerSpan2 {
   width: 100% !important;
   cursor: pointer;
   margin-left: 10px;
@@ -860,7 +719,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-#explorerSpan2:hover {
+.explorerSpan2:hover {
   background-color: #f9fbfc;
   width: 100%;
 }
@@ -901,7 +760,7 @@ export default {
   margin: 0 !important;
 }
 
-#trDirectories:hover {
+.trDirectories:hover {
   background-color: #f9fbfc;
   width: 100%;
 }
@@ -1025,21 +884,7 @@ thead th {
   margin-left: 16px;
 }
 
-#chipMovePicked {
-  margin-top: 7px;
-}
-
-#chipMoveDest {
-  font-family: "consolas";
-  margin-top: 10px;
-}
-
-#destInner {
-  font-weight: 600;
-  padding-right: 7px;
-}
-
-#entries {
+.entries {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */

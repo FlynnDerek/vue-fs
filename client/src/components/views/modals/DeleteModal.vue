@@ -96,7 +96,6 @@ export default {
 
 .listToDelete {
   list-style: none;
-  margin-top: -10px;
   padding-left: 10px;
   padding-bottom: 10px;
   text-align: left;
