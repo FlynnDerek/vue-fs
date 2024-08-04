@@ -134,7 +134,7 @@
               class="table display col-md-12"
               style="border: 2px solid #e5e5e5; margin-top: 10px; max-height: 400px; overflow-y: scroll;"
             >
-              <tbody>
+              <tbody class="tableHeight">
                 <tr v-for="folder in folders" :key="folder" class="trDirectories">
                   <div class="explorerSpan" v-on:click="selectSwitch(folder)">
                     <svg
@@ -198,7 +198,7 @@
               class="display col-md-12"
               style="overflow-y: scroll; border: 2px solid #e5e5e5; margin-top: 10px;"
             >
-              <tbody>
+              <tbody class="tableHeight">
                 <!-- NAVIGATOR PANE - RIGHT HAND TABLE--------------->
                 <tr
                   class="entries"
@@ -860,8 +860,11 @@ tr:after {
   clear: both;
 }
 
+.tableHeight {
+	height: 55vh;
+}
+
 tbody {
-  height: 55vh;
   padding-bottom: 10px;
   overflow-y: auto;
   overflow-x: hidden;

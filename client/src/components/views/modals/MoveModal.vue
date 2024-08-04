@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" width="600" transition="dialog-top-transition">
+    <v-dialog v-model="dialog" width="500" transition="dialog-top-transition">
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           class="moveBtn"
@@ -30,12 +30,12 @@
         </v-btn>
       </template>
 
-      <v-card>
+      <v-card class="moveContent col-md-12">
         <v-card-title class="text-h5 grey lighten-2">
           Move
         </v-card-title>
 
-        <div class="d-block text-center">
+        <div class="text-center">
           <ul class="listToMove">
             <li v-for="selectedObject in selectedObjects" :key="selectedObject">
               <p>
@@ -79,10 +79,10 @@
             </div>
 
             <div class="col-md-6">
-              <table class="fileTable display col-md-12">
+              <table class="tableMove display col-md-12">
                 <tbody>
                   <tr
-                    class="entries"
+                    class="entries trDirectories"
                     v-for="file in files"
                     :key="file.name"
                     v-on:click="sendMoveActionPaths(file.paths)"
@@ -112,7 +112,7 @@
 
         <p class="chipMoveDest">
           <v-chip outlined text color="#1d5df9"
-            ><span>Destination: </span>{{ destinationPath }}</v-chip
+            ><span class="chipMoveLabel">Destination: </span>{{ destinationPath }}</v-chip
           >
         </p>
 
@@ -183,21 +183,18 @@ export default {
   font-family: consolas;
 }
 
-.fileTable {
-  overflow-y: scroll;
-  border: 2px solid #e5e5e5;
-  margin-top: 10px;
-}
-
 .tableMove {
   border: 2px solid #e5e5e5;
-  margin-top: 10px;
-  height: 150px;
-  overflow-y: scroll;
+  min-height: 200px;
 }
 
 .chipMoveDest {
   font-family: "consolas";
   margin-top: 10px;
+}
+
+.chipMoveLabel {
+	margin-right: 5px;
+	font-weight: 600;
 }
 </style>
