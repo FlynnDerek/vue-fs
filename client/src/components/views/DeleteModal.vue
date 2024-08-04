@@ -72,10 +72,6 @@
 <script>
 export default {
   props: ["selectedObjects"],
-  created: function() {
-    console.log("data from parent component:");
-    console.log(this.selectedObjects);
-  },
   data() {
     return {
       dialog: false,
@@ -84,9 +80,7 @@ export default {
   methods: {
 	_delete() {
 		this.$emit('delete');
-		this.dialog = false;
 	}
-
   }
 };
 </script>
