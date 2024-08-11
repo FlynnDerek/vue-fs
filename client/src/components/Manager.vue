@@ -134,6 +134,7 @@
         ref="dropZone"
         class="myDropzone"
         :options="dropzoneOptions"
+		@vdropzone-success="updateOnFileUpload"
       ></vue-dropzone>
 
       <div class="row">
@@ -498,6 +499,10 @@ export default {
       await this.updateTable(params.currentPath);
     },
 
+	async updateOnFileUpload() {
+		this.files = await _explorerService.getContentsFromSelected(this.picked);
+	},
+
     async updateTable(path) {
       this.files = await _explorerService.getContentsFromSelected(path);
     },
@@ -714,7 +719,7 @@ export default {
   margin-top: 10px;
   border: 2px solid #e5e5e5;
   background-color: white;
-  outline: none;
+  outline: none !important;
 }
 
 .btnBack:hover {
