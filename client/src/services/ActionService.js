@@ -97,7 +97,7 @@ class ActionService {
         path: files,
       })
       .catch((err) => {
-        console.log(err);
+        console.err(err);
       });
   };
 }
