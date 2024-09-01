@@ -114,14 +114,18 @@
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              baseProfile="tiny"
-              version="1.2"
-              viewBox="0 0 422.1 329.5"
+              style="margin-right: 10px; margin-top: 3px;"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-cloud-download"
+              viewBox="0 0 16 16"
             >
               <path
-                stroke-width="5"
-                stroke-miterlimit="10"
-                d="M108.2 262.6L220 39c-44.1 0-84.5 24.9-104.2 64.4L4 327c44.2 0 84.5-24.9 104.2-64.4zM306.2 226.1L418 2.5c-44.1 0-84.5 24.9-104.2 64.4L202 290.5c44.2 0 84.5-24.9 104.2-64.4z"
+                d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"
+              />
+              <path
+                d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"
               />
             </svg>
             Download</v-btn
@@ -134,7 +138,7 @@
         ref="dropZone"
         class="myDropzone"
         :options="dropzoneOptions"
-		@vdropzone-success="updateOnFileUpload"
+        @vdropzone-success="updateOnFileUpload"
       ></vue-dropzone>
 
       <div class="row">
@@ -423,8 +427,7 @@
                     </svg>
 
                     <span>{{ file.names }}</span>
-                    <span
-                      class="tblRowDateTime float-right"
+                    <span class="tblRowDateTime float-right"
                       ><i>{{ file.dateTime }}</i></span
                     >
                   </label>
@@ -499,9 +502,9 @@ export default {
       await this.updateTable(params.currentPath);
     },
 
-	async updateOnFileUpload() {
-		this.files = await _explorerService.getContentsFromSelected(this.picked);
-	},
+    async updateOnFileUpload() {
+      this.files = await _explorerService.getContentsFromSelected(this.picked);
+    },
 
     async updateTable(path) {
       this.files = await _explorerService.getContentsFromSelected(path);
@@ -597,8 +600,11 @@ export default {
 
     async extract() {
       await _actionService.extract(this.picked).then(async () => {
-        await this.updateTable(this.currentDir);
-      });
+		await this.updateTable(this.currentDir);
+	  });
+	  
+	  this.checkedObjects = [];
+	  $(".tblFiles input:checkbox").prop("checked", false);
     },
 
     async move(destinationPath) {
@@ -734,7 +740,7 @@ export default {
   margin-left: -18px;
   margin-top: 34px;
   border: 2px solid #e5e5e5;
-  outline: none;
+  outline: none !important;
 }
 
 .btnClearSelect:hover {

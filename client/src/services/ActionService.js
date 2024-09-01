@@ -33,9 +33,12 @@ class ActionService {
   };
 
   extract = async function(path) {
-    axios
+    return axios
       .post(`${config.apiRoot}extract`, {
         path: path,
+      })
+      .then((response) => {
+        return response.data;
       })
       .catch((err) => {
         console.error(err);
@@ -47,8 +50,8 @@ class ActionService {
       .post(`${config.apiRoot}sendZips`, {
         sentZip: filesToSend,
       })
-      .then((respsonse) => {
-        return respsonse.data;
+      .then((response) => {
+        return response.data;
       })
       .catch((err) => {
         console.error(err);

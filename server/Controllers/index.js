@@ -15,13 +15,13 @@ const router = Router();
 
 let currentPath;
 let directoryPath;
-let myZip2;
+let filesToZip;
 
 // Responds with the relative path of a selected directory or file
 router.post("/sendPath", (req, res) => {
   currentPath = req.body.path ;
   const isDir = path.dirname(currentPath);
-  res.send({ path: currentPath, directory : isDir });
+  res.send({ path: currentPath, directory: isDir });
 });
 
 // Uploads files to the file directory
@@ -106,7 +106,7 @@ router.post("/newFolder", (req, res) => {
 // Pass the user's selected paths for use with the zip function
 router.post("/sendZips", (req, res) => {
   const myZip = req.body.sentZip;
-  myZip2 = req.body.sentZip;
+  filesToZip = req.body.sentZip;
   res.send(myZip);
 });
 
@@ -160,7 +160,7 @@ router.post("/movefile", (req, res) => {
 
 // Zip selected files and directories
 router.get("/zip", (req, res) => {
-  const files = myZip2;
+  const files = filesToZip;
   const archive = archiver("zip");
 
   archive.on("error", (err) => {
@@ -191,10 +191,12 @@ router.post("/extract", async (req, res) => {
 
   try {
     const dir = path.join(cwd(), dest);
-    await extract(src, { dir }).then(res.sendStatus(200));
+    await extract(src, { dir })
     Logger.Event("Extraction complete");
+	res.sendStatus(200);
   } catch (err) {
     Logger.Error(err);
+	res.sendStatus(500);
   }
 });
 
