@@ -12,12 +12,12 @@
   "author": "Derek Flynn",
   "license": "MIT",
   "dependencies": {
-    "archiver": "^5.3.0",
+    "archiver": "^5.3.2",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.2.1",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.1",
     "extract-zip": "^2.0.1",
-    "http-terminator": "^3.0.0",
+    "http-terminator": "^3.2.0",
     "mv": "^2.1.1",
     "path": "^0.12.7",
     "rimraf": "^3.0.2"
