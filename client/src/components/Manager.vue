@@ -619,11 +619,12 @@ export default {
 
     // Filters the right-hand table for given values
     searchTable() {
-      var input, filter, table, tr, td, i, txtValue;
+      var input, filter, table, body, tr, td, i, txtValue;
       input = this.searchTyped;
       filter = input.toUpperCase();
-      table = document.getElementByClassName("tblFiles");
-      tr = table.getElementsByTagName("tr");
+      table = document.getElementsByClassName("tblFiles")[1];
+	  body = table.getElementsByTagName("tbody")[0];
+      tr = body.getElementsByTagName("tr");
 
       for (i = 0; i < tr.length; i++) {
         td = tr[i].getElementsByTagName("span")[0];
