@@ -34,14 +34,14 @@
             </div>
           </div>
 
-          <div data-app class="btnDelete float-right">
+          <div class="btnDelete float-right">
             <DeleteModal
               :selectedObjects="checkedObjects"
               @delete="deleteSelections()"
             />
           </div>
 
-          <div data-app class="btnDelete float-right">
+          <div class="btnDelete float-right">
             <MoveModal
               :selectedObjects="checkedObjects"
               :files="files"
@@ -50,10 +50,9 @@
             />
           </div>
 
-          <v-btn
+          <el-button
             class="btnViewFile float-right"
             color="#835be3"
-            small
             @click="viewFile()"
           >
             <svg
@@ -72,12 +71,11 @@
                 d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
               />
             </svg>
-            View File</v-btn
+            View File</el-button
           >
 
-          <v-btn
+          <el-button
             class="btnExtract float-right"
-            small
             color="#3a5582"
             @click="extract()"
           >
@@ -96,18 +94,17 @@
               <path
                 d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"
               /></svg
-            >Extract</v-btn
+            >Extract</el-button
           >
 
-          <div data-app class="btnNewFolder float-right">
+          <div class="btnNewFolder float-right">
             <NewFolderModal
               :currentPath="picked"
               @createNewFolder="newFolder"
             />
           </div>
 
-          <v-btn
-            small
+          <el-button
             color="#8fe8c2"
             @click="download()"
             class="btnDownload float-right"
@@ -128,18 +125,19 @@
                 d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"
               />
             </svg>
-            Download</v-btn
+            Download</el-button
           >
         </div>
       </div>
 
-      <vue-dropzone
+      <!-- <vue-dropzone
         id="dropZone"
         ref="dropZone"
         class="myDropzone"
         :options="dropzoneOptions"
         @vdropzone-success="updateOnFileUpload"
-      ></vue-dropzone>
+      ></vue-dropzone> -->
+      <div id="dropZone" ref="dropZone" class="myDropzone"></div>
 
       <div class="row">
         <div class="col-md-3">
@@ -443,11 +441,9 @@
 
 <script>
 /* eslint-disable */
-import vue2Dropzone from "vue2-dropzone";
 import DeleteModal from "./views/modals/DeleteModal.vue";
 import MoveModal from "./views/modals/MoveModal.vue";
 import NewFolderModal from "./views/modals/NewFolderModal.vue";
-import "vue2-dropzone/dist/vue2Dropzone.min.css";
 import $ from "jquery";
 
 import ActionService from "../services/ActionService";
@@ -463,7 +459,7 @@ export default {
     DeleteModal,
     MoveModal,
     NewFolderModal,
-    vueDropzone: vue2Dropzone,
+    // vueDropzone: vue2Dropzone,
   },
   data() {
     return {
@@ -600,11 +596,11 @@ export default {
 
     async extract() {
       await _actionService.extract(this.picked).then(async () => {
-		await this.updateTable(this.currentDir);
-	  });
-	  
-	  this.checkedObjects = [];
-	  $(".tblFiles input:checkbox").prop("checked", false);
+        await this.updateTable(this.currentDir);
+      });
+
+      this.checkedObjects = [];
+      $(".tblFiles input:checkbox").prop("checked", false);
     },
 
     async move(destinationPath) {
@@ -623,7 +619,7 @@ export default {
       input = this.searchTyped;
       filter = input.toUpperCase();
       table = document.getElementsByClassName("tblFiles")[1];
-	  body = table.getElementsByTagName("tbody")[0];
+      body = table.getElementsByTagName("tbody")[0];
       tr = body.getElementsByTagName("tr");
 
       for (i = 0; i < tr.length; i++) {
@@ -675,7 +671,6 @@ export default {
 }
 
 .btnExtract {
-  color: white !important;
   margin: 10px 0 0 5px;
 }
 
@@ -685,7 +680,6 @@ export default {
 }
 
 .btnDelete {
-  color: white !important;
   margin-left: 5px;
   margin-top: 10px;
 }

@@ -1,15 +1,14 @@
-import Vue from 'vue'
+require("../node_modules/bootstrap/dist/css/bootstrap.css");
+import "bootstrap/dist/css/bootstrap.css";
 
-require('../node_modules/bootstrap/dist/css/bootstrap.css')
-import 'bootstrap/dist/css/bootstrap.css'
+import { createApp } from "vue";
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
 
-import vuetify from '@/plugins/vuetify' // path to vuetify export
+import App from "./App";
 
-import App from './App.vue'
+const app = createApp(App);
 
-Vue.config.productionTip = false
+app.use(ElementPlus);
 
-new Vue({
-  vuetify,
-  render: h => h(App),
-}).$mount('#app')
+app.mount("#app");
