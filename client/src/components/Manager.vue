@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
     <div class="actionSection">
-      <nav class="topBar navbar navbar-expand-sm navbar-dark border-bottom">
-        <p class="pathReadout"><b>Path: </b> {{ picked }}</p>
-        <p class="selectedReadout">
+      <div class="nav">
+        <span class="pathReadout"><b>Path: </b> {{ picked }}</span>
+        <span class="selectedReadout">
           <b>Checked Objects: </b>{{ checkedObjects }}
-        </p>
-      </nav>
+        </span>
+      </div>
 
       <el-row class="actions">
         <div>
@@ -110,8 +110,8 @@
       />
     </div>
 
-    <div class="fileSection">
-      <div class="tblFiles">
+    <el-row>
+      <el-col :sm="24" :lg="8" class="tblFiles">
         <table>
           <tbody>
             <tr v-for="folder in folders" :key="folder" class="trDirectories">
@@ -134,9 +134,9 @@
             </tr>
           </tbody>
         </table>
-      </div>
+      </el-col>
 
-      <div class="tblFiles">
+      <el-col :sm="24" :lg="16" class="tblFiles">
         <table>
           <tbody>
             <!-- NAVIGATOR PANE - RIGHT HAND TABLE--------------->
@@ -184,7 +184,7 @@
                 </svg>
 
                 <span>{{ file.names }}</span>
-                <span class="tblRowDateTime float-right"
+                <span class="tblRowDateTime"
                   ><i>{{ file.dateTime }}</i></span
                 >
               </div>
@@ -359,7 +359,7 @@
                   </svg>
 
                   <span>{{ file.names }}</span>
-                  <span class="tblRowDateTime float-right"
+                  <span class="tblRowDateTime"
                     ><i>{{ file.dateTime }}</i></span
                   >
                 </label>
@@ -367,8 +367,8 @@
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -584,8 +584,39 @@ export default {
   width: 100%;
 }
 
-.topBar {
+.nav {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  height: 40px;
+  padding: 5px 0 0 5px;
+  margin: 0;
+  width: 100%;
   background-color: #007bff;
+}
+
+.pathReadout {
+  min-width: 400px;
+  max-width: 900px;
+  color: rgb(255, 255, 255);
+  font-family: "consolas";
+  font-size: 12px;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectedReadout {
+  margin-left: 0px;
+  margin-top: 15px;
+  height: 20px;
+  color: rgb(255, 255, 255);
+  font-family: "consolas";
+  font-size: 12px;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .actionSection {
@@ -594,7 +625,7 @@ export default {
 }
 
 .actions {
-	padding: 5px;
+  padding: 5px;
 }
 
 .searchBar {
@@ -606,12 +637,12 @@ export default {
   margin: 0px 0px 0px 5px;
 }
 
-.fileSection {
+/* .fileSection {
   display: grid;
   grid-template-columns: 3fr 7fr;
   column-gap: 10px;
   overflow-y: auto;
-}
+} */
 
 .fileSection > * {
   min-width: 0px;
@@ -649,34 +680,6 @@ export default {
   background-color: #f9fbfc;
 }
 
-.pathReadout {
-  margin-left: 0px;
-  margin-top: 2px;
-  height: 20px;
-  min-width: 400px;
-  max-width: 900px;
-  color: rgb(255, 255, 255);
-  font-family: "consolas";
-  font-size: 12px;
-  position: absolute;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.selectedReadout {
-  margin-left: 0px;
-  margin-top: 32px;
-  height: 20px;
-  color: rgb(255, 255, 255);
-  font-family: "consolas";
-  font-size: 12px;
-  position: absolute;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 table {
   width: 100%;
   border-spacing: 0;
@@ -684,8 +687,9 @@ table {
 
 .tblFiles {
   border: 2px solid #e5e5e5;
-  margin-top: 10px;
+  margin: 10px 0 0 0;
   overflow-y: scroll;
+  border-radius: 5px;
 }
 
 thead,
@@ -737,6 +741,7 @@ thead th {
 
 .tblRowDateTime {
   margin-right: 10px;
+  float: right;
   font-family: "consolas";
   font-size: 14px;
 }

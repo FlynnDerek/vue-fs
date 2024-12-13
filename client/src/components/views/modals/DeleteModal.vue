@@ -31,12 +31,11 @@
       width="600"
       transition="dialog-top-transition"
     >
-      <span>
+      <span class="deleteDescription">
         Are you sure you want to delete the following?
       </span>
       <el-space direction="vertical"></el-space>
 
-      <div class="mx-auto col-md-12">
         <ul class="listToDelete">
           <b
             ><li
@@ -47,7 +46,6 @@
             </li></b
           >
         </ul>
-      </div>
       <template #footer>
         <el-button color="#dc3545" @click="_delete(), (dialogVisible = false)">
           Delete
@@ -77,6 +75,11 @@ export default {
 </script>
 
 <style>
+.deleteDescription {
+	display: block;
+	text-align: center;
+}
+
 .listToDelete {
   list-style: none;
   padding: 10px;

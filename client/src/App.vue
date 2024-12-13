@@ -16,8 +16,12 @@ export default {
 </script>
 
 <style>
-#app {
-  height: 100vh;
-  width: 100vw;
-}
+	body {
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+
+	#app {
+		font-family: 'Roboto', sans-serif;
+	}
 </style>

@@ -26,7 +26,6 @@
     </el-button>
 
     <el-dialog v-model="dialogVisible" title="Move" width="500" height="800">
-      <div class="text-center">
         <ul class="listToMove">
           <li v-for="selectedObject in selectedObjects" :key="selectedObject">
             <span>
@@ -34,10 +33,9 @@
             </span>
           </li>
         </ul>
-      </div>
 
-      <div class="row">
-        <div class="col-md-6">
+      <el-row>
+        <div class="tbl">
           <table class="tableMove">
             <tbody>
               <tr v-for="folder in folders" :key="folder" class="trDirectories">
@@ -65,8 +63,8 @@
           </table>
         </div>
 
-        <div class="col-md-6">
-          <table class="tableMove display col-md-12">
+        <div class="tbl">
+          <table class="tableMove">
             <tbody>
               <tr
                 class="entries trDirectories"
@@ -95,7 +93,7 @@
             </tbody>
           </table>
         </div>
-      </div>
+      </el-row>
 
       <span class="chipMoveLabel">Destination: </span>
       <span class="chipMoveDest">{{ destinationPath }}</span>
@@ -161,6 +159,11 @@ export default {
   text-align: left;
   font-size: 14px;
   font-family: consolas;
+}
+
+.tbl {
+	width: calc(50% - 5px);
+	margin-left: 5px;
 }
 
 .tableMove {

@@ -27,7 +27,6 @@
       transition="dialog-top-transition"
     >
       <el-input
-        class="col-md-12 mx-auto"
         placeholder="Folder Name"
         v-model="folderName"
 		autofocus
