@@ -17,68 +17,48 @@ let currentPath;
 let directoryPath;
 let filesToZip;
 
-// Responds with the relative path of a selected directory or file
-router.post("/sendPath", (req, res) => {
-  currentPath = req.body.path ;
-  const isDir = path.dirname(currentPath);
-  res.send({ path: currentPath, directory: isDir });
-});
+// List all files and directories from a selected directory
+router.get("/list", (req, res) => {
+	const dirPath = req.query.path;
+	directoryPath = dirPath;
+	let result = [];
+	let globalDir;
+  
+	if (!Path.isDir(dirPath)) globalDir = path.parse(dirPath).dir;
+	else globalDir = dirPath;
+  
+	fs.readdir(globalDir, (err, filesPath) => {
+	  if (err) throw err;
+	  result = filesPath.map((object) => {
+		return {
+		  path: `${globalDir}/${object}`,
+		  name: object,
+		  timestamp: DateTime.lastUpdatedDate(`${globalDir}/${object}`),
+		  isDir: Path.isDir(`${globalDir}/${object}`),
+		  fileExt: path.extname(`${globalDir}/${object}`),
+		};
+	  });
+	  res.send(
+		result.sort((a, b) => {
+		  return new Date(b.timestamp) - new Date(a.timestamp);
+		})
+	  );
+	});
+  });
 
 // Uploads files to the file directory
 router.post("/upload", (req, res) => {
   if (!req.files) {
     return res.status(500).send({ msg: "file is not found" });
   }
-  const myFile = req.files.file;
+  const file = req.files.file;
 
-  myFile.mv(`${directoryPath}/${myFile.name}`, (err) => {
+  file.mv(`${directoryPath}/${file.name}`, (err) => {
     if (err) {
       Logger.Error(err);
       return res.status(500).send({ msg: "Error occured" });
     }
-    return res.send({ name: myFile.name, path: `/${myFile.name}` });
-  });
-});
-
-// List all sub-directories in the 'files' directory.
-router.post("/getAllMainFolders", (req, res) => {
-  const dirPath = "./files/";
-  let result = [];
-  fs.readdir(dirPath, (err, filesPath) => {
-    if (err) throw err;
-    result = filesPath.map((filePath) => {
-      return `${dirPath}${filePath}`;
-    });
-    res.send(result);
-  });
-});
-
-// List all files and directories from a selected directory
-router.post("/getAllFilesFromSelectedFolder", (req, res) => {
-  const dirPath = req.body.path;
-  directoryPath = dirPath;
-  let result = [];
-  let globalDir;
-
-  if (!Path.isDir(dirPath)) globalDir = path.parse(dirPath).dir;
-  else globalDir = dirPath;
-
-  fs.readdir(globalDir, (err, filesPath) => {
-    if (err) throw err;
-    result = filesPath.map((filePath) => {
-      return {
-        paths: `${globalDir}/${filePath}`,
-        names: filePath,
-        dateTime: DateTime.lastUpdatedDate(`${globalDir}/${filePath}`),
-        isDir: Path.isDir(`${globalDir}/${filePath}`),
-        fileExt: path.extname(`${globalDir}/${filePath}`),
-      };
-    });
-    res.send(
-      result.sort((a, b) => {
-        return new Date(b.dateTime) - new Date(a.dateTime);
-      })
-    );
+    return res.send({ name: file.name, path: `/${file.name}` });
   });
 });
 
@@ -103,13 +83,6 @@ router.post("/newFolder", (req, res) => {
   return res.sendStatus(200);
 });
 
-// Pass the user's selected paths for use with the zip function
-router.post("/sendZips", (req, res) => {
-  const myZip = req.body.sentZip;
-  filesToZip = req.body.sentZip;
-  res.send(myZip);
-});
-
 // Download a file
 router.get("/download", (req, res) => {
   const selectedPath = currentPath;
@@ -120,6 +93,7 @@ router.get("/download", (req, res) => {
 
 // View a file
 router.get("/view", (req, res) => {
+	console.log(res.data)
   res.sendFile(currentPath, { root: cwd() });
 });
 

@@ -28,6 +28,7 @@
     >
       <el-input
         placeholder="Folder Name"
+		focus
         v-model="folderName"
 		autofocus
       ></el-input>

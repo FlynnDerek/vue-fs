@@ -16,12 +16,12 @@ export default {
 </script>
 
 <style>
-	body {
-		padding: 0 !important;
-		margin: 0 !important;
-	}
+body {
+  padding: 0 !important;
+  margin: 0 !important;
+}
 
-	#app {
-		font-family: 'Roboto', sans-serif;
-	}
+#app {
+  font-family: "Roboto", sans-serif;
+}
 </style>

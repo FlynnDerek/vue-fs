@@ -1,160 +1,123 @@
 <template>
   <div class="wrapper">
-    <div class="actionSection">
-      <div class="nav">
-        <span class="pathReadout"><b>Path: </b> {{ picked }}</span>
-        <span class="selectedReadout">
-          <b>Checked Objects: </b>{{ checkedObjects }}
-        </span>
+    <el-row class="breadcrumbs">
+      <Breadcrumbs :currentPath="path" @selectedBreadcrumb="setBreadcrumbs" />
+    </el-row>
+
+    <el-row class="actions">
+      <div>
+        <el-input
+          class="searchBar"
+          v-model="filterText"
+          placeholder="Search by File Name or Type"
+          @keyup="searchTable()"
+        />
+      </div>
+      <div class="actionBtn">
+        <el-button color="#8fe8c2" @click="download()" class="actionBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            style="margin-right: 10px; margin-top: 3px;"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-cloud-download"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"
+            />
+            <path
+              d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"
+            />
+          </svg>
+          Download</el-button
+        >
       </div>
 
-      <el-row class="actions">
-        <div>
-          <el-input
-            class="searchBar"
-            v-model="searchTyped"
-            placeholder="Search by File Name or Type"
-            :prefix-icon="Search"
-            @keyup="searchTable()"
-          />
-        </div>
-        <div class="actionBtn">
-          <el-button color="#8fe8c2" @click="download()" class="actionBtn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              style="margin-right: 10px; margin-top: 3px;"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-cloud-download"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"
-              />
-              <path
-                d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"
-              />
-            </svg>
-            Download</el-button
+      <div class="actionBtn">
+        <NewFolderModal :currentPath="path" @createNewFolder="newFolder" />
+      </div>
+
+      <div class="actionBtn">
+        <el-button :disabled="selectedObjects.length !== 1" color="#3a5582" @click="extract()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            style="margin-right: 7px;"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-file-arrow-up"
+            viewBox="0 0 16 16"
           >
-        </div>
+            <path
+              d="M8 11a.5.5 0 0 0 .5-.5V6.707l1.146 1.147a.5.5 0 0 0 .708-.708l-2-2a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L7.5 6.707V10.5a.5.5 0 0 0 .5.5z"
+            />
+            <path
+              d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"
+            /></svg
+          >Extract</el-button
+        >
+      </div>
 
-        <div class="actionBtn">
-          <NewFolderModal :currentPath="picked" @createNewFolder="newFolder" />
-        </div>
-
-        <div class="actionBtn">
-          <el-button color="#3a5582" @click="extract()">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              style="margin-right: 7px;"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-file-arrow-up"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M8 11a.5.5 0 0 0 .5-.5V6.707l1.146 1.147a.5.5 0 0 0 .708-.708l-2-2a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L7.5 6.707V10.5a.5.5 0 0 0 .5.5z"
-              />
-              <path
-                d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"
-              /></svg
-            >Extract</el-button
+      <div class="actionBtn">
+        <el-button class="actionBtn" color="#835be3" @click="viewFile()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            style="margin-right: 10px;"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-eye"
+            viewBox="0 0 16 16"
           >
-        </div>
+            <path
+              d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+            />
+            <path
+              d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
+            />
+          </svg>
+          View File</el-button
+        >
+      </div>
 
-        <div class="actionBtn">
-          <el-button class="actionBtn" color="#835be3" @click="viewFile()">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              style="margin-right: 10px;"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-eye"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
-              />
-              <path
-                d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
-              />
-            </svg>
-            View File</el-button
-          >
-        </div>
+      <div class="actionBtn">
+        <MoveModal
+          :selectedObjects="selectedObjects"
+          :objects="objects"
+          :folders="folders"
+          @move="move"
+        />
+      </div>
 
-        <div class="actionBtn">
-          <MoveModal
-            :selectedObjects="checkedObjects"
-            :files="files"
-            :folders="folders"
-            @move="move"
-          />
-        </div>
-
-        <div class="actionBtn">
-          <DeleteModal
-            :selectedObjects="checkedObjects"
-            @delete="deleteSelections()"
-          />
-        </div>
-      </el-row>
-
-      <vue-dropzone
-        :options="dropzoneOptions"
-        @vdropzone-success="updateOnFileUpload"
-      />
-    </div>
+      <div class="actionBtn">
+        <DeleteModal
+          :selectedObjects="selectedObjects"
+          @delete="deleteSelections()"
+        />
+      </div>
+    </el-row>
 
     <el-row>
-      <el-col :sm="24" :lg="8" class="tblFiles">
+      <el-col :span="24" class="tblFiles">
         <table>
           <tbody>
-            <tr v-for="folder in folders" :key="folder" class="trDirectories">
-              <div class="explorerSpan" v-on:click="selectSwitch(folder)">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  style="margin-right: 10px;"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-folder"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M.54 3.87L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
-                  />
-                </svg>
-                {{ folder.substring(8) }}
-              </div>
-            </tr>
-          </tbody>
-        </table>
-      </el-col>
-
-      <el-col :sm="24" :lg="16" class="tblFiles">
-        <table>
-          <tbody>
-            <!-- NAVIGATOR PANE - RIGHT HAND TABLE--------------->
             <tr
               class="entries"
-              v-for="file in files"
-              :key="file.name"
-              @click="sendPaths(file.paths, file.names, file.isDir)"
+              v-for="object in objects"
+              :key="object.name"
+              @click="setPath(object.path, object.name, object.isDir)"
             >
-              <div class="explorerSpan2" v-if="file.isDir == true">
+              <div class="explorerSpan2" v-if="object.isDir == true">
                 <input
                   class="checkbox"
                   type="checkbox"
-                  @click.stop="toggleFile(file.paths)"
+                  @click.stop="toggleObject(object.path)"
                 />
 
                 <svg
-                  v-if="file.isDir == true"
+                  v-if="object.isDir == true"
                   xmlns="http://www.w3.org/2000/svg"
                   style="margin-right: 10px; margin-left: 10px;"
                   width="16"
@@ -170,7 +133,7 @@
 
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  v-if="file.isDir == false"
+                  v-if="object.isDir == false"
                   style="margin-right: 10px; margin-left: 10px; color: #007bff;"
                   width="16"
                   height="16"
@@ -183,31 +146,29 @@
                   />
                 </svg>
 
-                <span>{{ file.names }}</span>
+                <span>{{ object.name }}</span>
                 <span class="tblRowDateTime"
-                  ><i>{{ file.dateTime }}</i></span
+                  ><i>{{ object.timestamp }}</i></span
                 >
               </div>
             </tr>
 
-            <!-- FILES - RIGHT HAND TABLE ------------------------------>
-
             <tr
               class="entries"
-              v-for="file in files"
-              :key="file.name"
-              v-on:click="sendPaths(file.paths, file.names, file.isDir)"
+              v-for="object in objects"
+              :key="object.name"
+              v-on:click="setPath(object.path, object.name, object.isDir)"
             >
-              <div class="explorerSpan2" v-if="file.isDir == false">
+              <div class="explorerSpan2" v-if="object.isDir == false">
                 <label class="tblSpanLabel">
                   <input
                     class="checkbox"
                     type="checkbox"
-                    @click="toggleFile(file.paths)"
+                    @click="toggleObject(object.path)"
                   />
 
                   <svg
-                    v-if="file.isDir == true"
+                    v-if="object.isDir == true"
                     xmlns="http://www.w3.org/2000/svg"
                     style="margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                     width="16"
@@ -224,21 +185,21 @@
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     v-if="
-                      file.isDir == false &&
-                        file.fileExt !== '.zip' &&
-                        file.fileExt !== '.7z' &&
-                        file.fileExt !== '.mp4' &&
-                        file.fileExt !== '.webm' &&
-                        file.fileExt !== '.mpeg' &&
-                        file.fileExt !== '.wmv' &&
-                        file.fileExt !== '.mov' &&
-                        file.fileExt !== '.avi' &&
-                        file.fileExt !== '.pdf' &&
-                        file.fileExt !== '.docx' &&
-                        file.fileExt !== '.png' &&
-                        file.fileExt !== '.PNG' &&
-                        file.fileExt !== '.jpg' &&
-                        file.fileExt !== '.jpeg'
+                      object.isDir == false &&
+                        object.fileExt !== '.zip' &&
+                        object.fileExt !== '.7z' &&
+                        object.fileExt !== '.mp4' &&
+                        object.fileExt !== '.webm' &&
+                        object.fileExt !== '.mpeg' &&
+                        object.fileExt !== '.wmv' &&
+                        object.fileExt !== '.mov' &&
+                        object.fileExt !== '.avi' &&
+                        object.fileExt !== '.pdf' &&
+                        object.fileExt !== '.docx' &&
+                        object.fileExt !== '.png' &&
+                        object.fileExt !== '.PNG' &&
+                        object.fileExt !== '.jpg' &&
+                        object.fileExt !== '.jpeg'
                     "
                     style="margin-right: 10px; margin-left: 10px; color: #007bff; margin-top: -5px;"
                     width="16"
@@ -256,10 +217,10 @@
                     xmlns="http://www.w3.org/2000/svg"
                     style="color: #75b5aa; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                     v-if="
-                      file.fileExt == '.png' ||
-                        file.fileExt == '.PNG' ||
-                        file.fileExt == '.jpg' ||
-                        file.fileExt == 'jpeg'
+                      object.fileExt == '.png' ||
+                        object.fileExt == '.PNG' ||
+                        object.fileExt == '.jpg' ||
+                        object.fileExt == 'jpeg'
                     "
                     width="16"
                     height="16"
@@ -276,7 +237,7 @@
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     style="color: #295394; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
-                    v-if="file.fileExt == '.docx'"
+                    v-if="object.fileExt == '.docx'"
                     width="16"
                     height="16"
                     fill="currentColor"
@@ -292,7 +253,7 @@
                     xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink"
                     fill="#be2e31"
-                    v-if="file.fileExt == '.pdf'"
+                    v-if="object.fileExt == '.pdf'"
                     style="margin-right: 10px; margin-left: 10px;"
                     aria-hidden="true"
                     version="1.1"
@@ -319,12 +280,12 @@
                     xmlns="http://www.w3.org/2000/svg"
                     style="color: #d28445; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                     v-if="
-                      file.fileExt == '.mp4' ||
-                        file.fileExt == '.webm' ||
-                        file.fileExt == '.mpeg' ||
-                        file.fileExt == '.wmv' ||
-                        file.fileExt == '.mov' ||
-                        file.fileExt == '.avi'
+                      object.fileExt == '.mp4' ||
+                        object.fileExt == '.webm' ||
+                        object.fileExt == '.mpeg' ||
+                        object.fileExt == '.wmv' ||
+                        object.fileExt == '.mov' ||
+                        object.fileExt == '.avi'
                     "
                     width="16"
                     height="16"
@@ -341,7 +302,7 @@
                   </svg>
 
                   <svg
-                    v-if="file.fileExt == '.zip' || file.fileExt == '.7z'"
+                    v-if="object.fileExt == '.zip' || object.fileExt == '.7z'"
                     style="color: #c09c0c; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -358,9 +319,9 @@
                     />
                   </svg>
 
-                  <span>{{ file.names }}</span>
+                  <span>{{ object.name }}</span>
                   <span class="tblRowDateTime"
-                    ><i>{{ file.dateTime }}</i></span
+                    ><i>{{ object.timestamp }}</i></span
                   >
                 </label>
               </div>
@@ -369,12 +330,15 @@
         </table>
       </el-col>
     </el-row>
+
+	<p>path: {{path}}</p>
+	<p>selected: {{selectedObjects}}</p>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
-import vueDropzone from "dropzone-vue3";
+import Breadcrumbs from "./views/breadcrumbs/Breadcrumbs.vue";
 import DeleteModal from "./views/modals/DeleteModal.vue";
 import MoveModal from "./views/modals/MoveModal.vue";
 import NewFolderModal from "./views/modals/NewFolderModal.vue";
@@ -391,10 +355,10 @@ var _fileHelper = new FileHelper();
 
 export default {
   components: {
+    Breadcrumbs,
     DeleteModal,
     MoveModal,
     NewFolderModal,
-    vueDropzone,
   },
   data() {
     return {
@@ -408,38 +372,35 @@ export default {
         timeout: 10000000,
       },
       baseConfig: config,
-      isSelected: 0,
-      folderName: "",
-      files: [],
-      folders: [],
-      picked: "./files",
-      moveDestination: "No Folder Selected",
-      pickedFile: "./files/A1_Main/no_file_selected.txt",
+      objects: [],
+      path: "./root",
+      pickedFile: "./root/none.txt",
       fileSize: [],
-      searchTyped: "",
-      checkedObjects: [],
-      currentDir: "",
+      filterText: "",
+      selectedObjects: [],
     };
   },
 
   async mounted() {
-    this.getFolders();
-    await this.updateTable("./files/A1_Main");
+    await this.updateTable("./root")
   },
-
   methods: {
     async newFolder(params) {
       await _actionService.newFolder(params.currentPath, params.folderName);
-      await this.getFolders();
       await this.updateTable(params.currentPath);
     },
 
+    async setBreadcrumbs(path) {
+      await this.updateTable(path);
+      this.path = path;
+    },
+
     async updateOnFileUpload() {
-      this.files = await _explorerService.getContentsFromSelected(this.picked);
+      this.objects = await _explorerService.list(this.path);
     },
 
     async updateTable(path) {
-      this.files = await _explorerService.getContentsFromSelected(path);
+      this.objects = await _explorerService.list(path);
     },
 
     // Lists the contents of a selected main directory
@@ -452,36 +413,29 @@ export default {
       });
 
       $(".tblFiles input:checkbox").prop("checked", false);
-      this.checkedObjects = [];
-      this.picked = path;
-      await this.updateTable(this.picked);
+      this.selectedObjects = [];
+      this.path = path;
+      await this.updateTable(this.path);
     },
 
-    async toggleFile(file) {
-      var selected = this.checkedObjects;
+    async toggleObject(path) {
+      var selected = this.selectedObjects;
 
-      if (selected.includes(file)) {
-        selected.splice(selected.indexOf(file), 1);
+	  console.log(this.selectedObjects)
+
+      if (selected.includes(path)) {
+        selected.splice(selected.indexOf(path), 1);
       } else {
-        selected.push(file);
+        selected.push(path);
       }
-
-      this.checkedObjects = await _actionService.sendToZip(selected);
     },
 
-    async getFolders() {
-      this.folders = await _explorerService.getExplorerFolders();
-    },
-
-    sendPaths: async function(path, fileName, isDir) {
+    async setPath(path, fileName, isDir) {
       this.pickedFile = fileName;
-      var response = await _explorerService.sendPath(path);
 
-      this.picked = response.data.path;
-      this.currentDir = response.data.directory;
-      if (isDir == true) {
-        $(".tblFiles input:checkbox").prop("checked", false);
-        await this.updateTable(this.picked);
+      if (isDir) {
+        this.path = path;
+        await this.updateTable(this.path);
       }
     },
 
@@ -490,39 +444,34 @@ export default {
     },
 
     clearSelects() {
-      this.checkedObjects = [];
+      this.selectedObjects = [];
       $(".tblFiles input:checkbox").prop("checked", false);
-    },
-
-    setFolderAsMain() {
-      this.picked = "./files/";
     },
 
     // Moves the user back a level
     async prevDir() {
-      if (this.picked == "./files") {
+      if (this.path == "./root") {
         console.log("Your're in the root directory");
-      } else if (this.picked == "./files") {
+      } else if (this.path == "./root") {
         console.log("Your're in the root directory");
       } else {
-        this.picked = this.picked.substr(0, this.picked.lastIndexOf("/"));
-        await this.updateTable(this.picked);
+        this.path = this.path.substr(0, this.path.lastIndexOf("/"));
+        await this.updateTable(this.path);
       }
     },
 
     async deleteSelections() {
-      await _actionService.delete(this.checkedObjects).then(async () => {
-        this.checkedObjects = [];
+      await _actionService.delete(this.selectedObjects).then(async () => {
+        this.selectedObjects = [];
         $(".tblFiles input:checkbox").prop("checked", false);
-        await this.getFolders();
-        await this.updateTable(this.currentDir);
+        await this.updateTable(this.path);
       });
     },
 
     download() {
       if (
-        this.checkedObjects.length == 1 &&
-        _fileHelper.isAFile(this.checkedObjects.toString())
+        this.selectedObjects.length == 1 &&
+        _fileHelper.isAFile(this.selectedObjects.toString())
       ) {
         _actionService.downloadSingle(this.pickedFile);
       } else {
@@ -531,19 +480,20 @@ export default {
     },
 
     async extract() {
-      await _actionService.extract(this.picked).then(async () => {
-        await this.updateTable(this.currentDir);
+      await _actionService.extract(this.selectedObjects[0])
+	  .then(async () => {
+        await this.updateTable(this.path);
       });
 
-      this.checkedObjects = [];
+      this.selectedObjects = [];
       $(".tblFiles input:checkbox").prop("checked", false);
     },
 
     async move(destinationPath) {
       await _actionService
-        .move(this.checkedObjects, destinationPath)
+        .move(this.selectedObjects, destinationPath)
         .then(async () => {
-          this.checkedObjects = [];
+          this.selectedObjects = [];
           $(".tblFiles input:checkbox").prop("checked", false);
           await this.updateTable(destinationPath);
         });
@@ -552,9 +502,9 @@ export default {
     // Filters the right-hand table for given values
     searchTable() {
       var input, filter, table, body, tr, td, i, txtValue;
-      input = this.searchTyped;
+      input = this.filterText;
       filter = input.toUpperCase();
-      table = document.getElementsByClassName("tblFiles")[1];
+      table = document.getElementsByClassName("tblFiles")[0];
       body = table.getElementsByTagName("tbody")[0];
       tr = body.getElementsByTagName("tr");
 
@@ -577,33 +527,12 @@ export default {
 <style>
 .wrapper {
   display: grid;
-  grid-template-rows: 1fr 2fr;
+  padding: 10px;
+  grid-template-rows: 1fr 1fr 22fr;
   height: 500px;
   overflow-x: hidden;
   overflow-y: hidden;
-  width: 100%;
-}
-
-.nav {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  height: 40px;
-  padding: 5px 0 0 5px;
-  margin: 0;
-  width: 100%;
-  background-color: #007bff;
-}
-
-.pathReadout {
-  min-width: 400px;
-  max-width: 900px;
-  color: rgb(255, 255, 255);
-  font-family: "consolas";
-  font-size: 12px;
-  position: absolute;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  width: 90%;
 }
 
 .selectedReadout {
@@ -619,33 +548,17 @@ export default {
   text-overflow: ellipsis;
 }
 
-.actionSection {
-  display: grid;
-  grid-template-rows: 50px 1fr;
-}
-
 .actions {
-  padding: 5px;
+  padding: 5px 0;
 }
 
 .searchBar {
-  height: 28px;
+  height: 32px;
   min-width: 250px;
 }
 
 .actionBtn {
   margin: 0px 0px 0px 5px;
-}
-
-/* .fileSection {
-  display: grid;
-  grid-template-columns: 3fr 7fr;
-  column-gap: 10px;
-  overflow-y: auto;
-} */
-
-.fileSection > * {
-  min-width: 0px;
 }
 
 .explorerSpan {
@@ -686,8 +599,7 @@ table {
 }
 
 .tblFiles {
-  border: 2px solid #e5e5e5;
-  margin: 10px 0 0 0;
+  border: 1.5px solid #dcdee3;
   overflow-y: scroll;
   border-radius: 5px;
 }

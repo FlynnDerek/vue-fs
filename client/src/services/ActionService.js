@@ -7,7 +7,7 @@ class ActionService {
   downloadSingle = async function(pickedFile) {
     var get = pickedFile;
     axios
-      .get(`${config.apiRoot}download`, {
+      .get(`${config.baseUrl}download`, {
         responseType: "blob",
       })
       .then((response) => {
@@ -20,7 +20,7 @@ class ActionService {
 
   downloadMultiple = async function() {
     axios
-      .get(`${config.apiRoot}zip`, {
+      .get(`${config.baseUrl}zip`, {
         responseType: "blob",
       })
       .then((response) => {
@@ -34,7 +34,7 @@ class ActionService {
 
   extract = async function(path) {
     return axios
-      .post(`${config.apiRoot}extract`, {
+      .post(`${config.baseUrl}extract`, {
         path: path,
       })
       .then((response) => {
@@ -47,7 +47,7 @@ class ActionService {
 
   sendToZip = async function(filesToSend) {
     return axios
-      .post(`${config.apiRoot}sendZips`, {
+      .post(`${config.baseUrl}sendZips`, {
         sentZip: filesToSend,
       })
       .then((response) => {
@@ -60,7 +60,7 @@ class ActionService {
 
   newFolder = async function(currentPath, folderName) {
     return axios
-      .post(`${config.apiRoot}newFolder`, {
+      .post(`${config.baseUrl}newFolder`, {
         currentPath,
         folderName,
       })
@@ -71,9 +71,9 @@ class ActionService {
 
   viewFile = async function() {
     return axios
-      .get(`${config.apiRoot}view`, {})
+      .get(`${config.baseUrl}view`, {})
       .then(() => {
-        window.open(`${config.apiRoot}view`);
+        window.open(`${config.baseUrl}view`);
       })
       .catch((err) => {
         console.error(err);
@@ -82,7 +82,7 @@ class ActionService {
 
   move = async function(origin, destination) {
     axios
-      .post(`${config.apiRoot}movefile`, {
+      .post(`${config.baseUrl}movefile`, {
         origin,
         destination,
       })
@@ -91,10 +91,10 @@ class ActionService {
       });
   };
 
-  delete = async function(files) {
+  delete = async function(objects) {
     return axios
-      .post(`${config.apiRoot}delete`, {
-        path: files,
+      .post(`${config.baseUrl}delete`, {
+        path: objects,
       })
       .catch((err) => {
         console.err(err);
