@@ -368,15 +368,6 @@ export default {
   },
   data() {
     return {
-      dropzoneOptions: {
-        url: `http://localhost:5000/upload`,
-        thumbnailWidth: 150,
-        maxFilesize: 10000,
-        dictDefaultMessage: "Drag & Drop or Click to Upload",
-        addRemoveLinks: true,
-        dictRemoveFile: "Clear File",
-        timeout: 10000000,
-      },
       baseConfig: config,
       objects: [],
       path: "./root",
