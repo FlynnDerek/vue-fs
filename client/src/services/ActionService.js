@@ -4,6 +4,20 @@ import config from "../config.json";
 import FileDownload from "js-file-download";
 
 class ActionService {
+
+ upload = async function(files) {
+    return axios
+      .post(`${config.baseUrl}upload`, {
+        files: files,
+      })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   downloadSingle = async function(pickedFile) {
     var get = pickedFile;
     axios

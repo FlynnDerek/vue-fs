@@ -99,6 +99,10 @@
       </div>
     </el-row>
 
+	<el-row>
+		<Upload class="upload" @refresh="updateOnFileUpload()" />
+	</el-row>
+
     <el-row>
       <el-col :span="24" class="tblFiles">
         <table>
@@ -339,6 +343,7 @@
 <script>
 /* eslint-disable */
 import Breadcrumbs from "./views/breadcrumbs/Breadcrumbs.vue";
+import Upload from "./views/upload/Upload.vue"
 import DeleteModal from "./views/modals/DeleteModal.vue";
 import MoveModal from "./views/modals/MoveModal.vue";
 import NewFolderModal from "./views/modals/NewFolderModal.vue";
@@ -356,6 +361,7 @@ var _fileHelper = new FileHelper();
 export default {
   components: {
     Breadcrumbs,
+	Upload,
     DeleteModal,
     MoveModal,
     NewFolderModal,
@@ -439,8 +445,8 @@ export default {
       }
     },
 
-    viewFile() {
-      _actionService.viewFile();
+    async viewFile() {
+      await _actionService.viewFile();
     },
 
     clearSelects() {
@@ -451,9 +457,9 @@ export default {
     // Moves the user back a level
     async prevDir() {
       if (this.path == "./root") {
-        console.log("Your're in the root directory");
+        console.log("You're in the root directory");
       } else if (this.path == "./root") {
-        console.log("Your're in the root directory");
+        console.log("You're in the root directory");
       } else {
         this.path = this.path.substr(0, this.path.lastIndexOf("/"));
         await this.updateTable(this.path);
@@ -528,8 +534,9 @@ export default {
 .wrapper {
   display: grid;
   padding: 10px;
-  grid-template-rows: 1fr 1fr 22fr;
-  height: 500px;
+  grid-template-rows: 1fr 1fr 1fr 22fr;
+  row-gap: 5px;
+  height: 600px;
   overflow-x: hidden;
   overflow-y: hidden;
   width: 90%;
@@ -548,10 +555,6 @@ export default {
   text-overflow: ellipsis;
 }
 
-.actions {
-  padding: 5px 0;
-}
-
 .searchBar {
   height: 32px;
   min-width: 250px;
@@ -559,6 +562,10 @@ export default {
 
 .actionBtn {
   margin: 0px 0px 0px 5px;
+}
+
+.upload {
+
 }
 
 .explorerSpan {
