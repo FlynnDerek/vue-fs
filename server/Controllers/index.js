@@ -15,7 +15,6 @@ const router = Router();
 
 let currentPath;
 let directoryPath;
-let filesToZip;
 
 // List all files and directories from a selected directory
 router.get("/list", (req, res) => {
@@ -35,7 +34,7 @@ router.get("/list", (req, res) => {
 		  name: object,
 		  timestamp: DateTime.lastUpdatedDate(`${globalDir}/${object}`),
 		  isDir: Path.isDir(`${globalDir}/${object}`),
-		  fileExt: path.extname(`${globalDir}/${object}`),
+		  ext: path.extname(`${globalDir}/${object}`),
 		};
 	  });
 	  res.send(
@@ -85,7 +84,7 @@ router.post("/newFolder", (req, res) => {
 
 // Download a file
 router.get("/download", (req, res) => {
-  const selectedPath = currentPath;
+  
   Logger.Event(`Download: ${currentPath}`);
   const file = path.join(cwd(), selectedPath.substring(1));
   res.sendFile(file);

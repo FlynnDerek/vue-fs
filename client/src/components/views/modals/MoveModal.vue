@@ -26,49 +26,27 @@
     </el-button>
 
     <el-dialog v-model="dialogVisible" title="Move" width="500" height="800">
-        <ul class="listToMove">
-          <li v-for="selectedObject in selectedObjects" :key="selectedObject">
-            <span>
-              <b>- {{ selectedObject.substring(8) }}</b>
-            </span>
-          </li>
-        </ul>
+      <ul class="listToMove">
+        <li v-for="selectedObject in selectedObjects" :key="selectedObject">
+          <span>
+            <b>- {{ selectedObject.substring(7) }}</b>
+          </span>
+        </li>
+      </ul>
 
       <el-row>
-        <div class="tbl">
-          <table class="tableMove">
-            <tbody>
-              <tr v-for="folder in folders" :key="folder" class="trDirectories">
-                <div
-                  class="explorerSpan"
-                  v-on:click="sendMoveActionPaths(folder)"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    style="margin-right: 10px;"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-folder"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      d="M.54 3.87L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
-                    />
-                  </svg>
-                  {{ folder.substring(8) }}
-                </div>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <Breadcrumbs
+          class="breadcrumbs"
+          :currentPath="destinationPath"
+          @selectedBreadcrumb="setMoveBreadcrumbs"
+        />
 
         <div class="tbl">
           <table class="tableMove">
             <tbody>
               <tr
                 class="entries trDirectories"
-                v-for="object in objects"
+                v-for="object in moveObjects"
                 :key="object.name"
                 v-on:click="sendMoveActionPaths(object.path)"
               >
@@ -116,25 +94,35 @@
 
 <script>
 import ExplorerService from "../../../services/ExplorerService";
+import Breadcrumbs from "../breadcrumbs/Breadcrumbs.vue";
 
 var _explorerService = new ExplorerService();
 
 export default {
-  props: ["selectedObjects", "folders"],
+  props: ["selectedObjects", "objects"],
+  components: {
+    Breadcrumbs,
+  },
   data() {
     return {
+      destinationPath: "./root",
       dialogVisible: false,
+      moveObjects: [],
       folderName: "",
-      objects: [],
-      destinationPath: "No Folder Selected",
     };
+  },
+  async mounted() {
+    this.moveObjects = this.objects;
   },
   methods: {
     sendMoveActionPaths: async function(destinationPath) {
       this.destinationPath = destinationPath;
-      this.objects = await _explorerService.list(
-        destinationPath
-      );
+      this.moveObjects = await _explorerService.list(destinationPath);
+    },
+
+    async setMoveBreadcrumbs(path) {
+      this.moveObjects = await _explorerService.list(path);
+      this.destinationPath = path;
     },
 
     move() {
@@ -142,13 +130,17 @@ export default {
     },
 
     cancel() {
-      this.destinationPath = "No Folder Selected";
+      this.destinationPath = "./root";
     },
   },
 };
 </script>
 
 <style>
+.breadcrumbs {
+  margin: 10px 0px 10px 8px;
+}
+
 .cancelBtn {
   margin-left: 8px;
 }
@@ -162,8 +154,8 @@ export default {
 }
 
 .tbl {
-	width: calc(50% - 5px);
-	margin-left: 5px;
+  width: calc(100% - 5px);
+  margin-left: 5px;
 }
 
 .tableMove {

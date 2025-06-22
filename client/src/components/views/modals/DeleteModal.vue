@@ -42,7 +42,7 @@
               v-for="selectedObject in selectedObjects"
               :key="selectedObject"
             >
-              - {{ selectedObject.substring(8) }}
+              - {{ selectedObject.substring(7) }}
             </li></b
           >
         </ul>

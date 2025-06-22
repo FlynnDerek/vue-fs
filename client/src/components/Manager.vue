@@ -86,7 +86,6 @@
         <MoveModal
           :selectedObjects="selectedObjects"
           :objects="objects"
-          :folders="folders"
           @move="move"
         />
       </div>
@@ -190,20 +189,20 @@
                     xmlns="http://www.w3.org/2000/svg"
                     v-if="
                       object.isDir == false &&
-                        object.fileExt !== '.zip' &&
-                        object.fileExt !== '.7z' &&
-                        object.fileExt !== '.mp4' &&
-                        object.fileExt !== '.webm' &&
-                        object.fileExt !== '.mpeg' &&
-                        object.fileExt !== '.wmv' &&
-                        object.fileExt !== '.mov' &&
-                        object.fileExt !== '.avi' &&
-                        object.fileExt !== '.pdf' &&
-                        object.fileExt !== '.docx' &&
-                        object.fileExt !== '.png' &&
-                        object.fileExt !== '.PNG' &&
-                        object.fileExt !== '.jpg' &&
-                        object.fileExt !== '.jpeg'
+                        object.ext !== '.zip' &&
+                        object.ext !== '.7z' &&
+                        object.ext !== '.mp4' &&
+                        object.ext !== '.webm' &&
+                        object.ext !== '.mpeg' &&
+                        object.ext !== '.wmv' &&
+                        object.ext !== '.mov' &&
+                        object.ext !== '.avi' &&
+                        object.ext !== '.pdf' &&
+                        object.ext !== '.docx' &&
+                        object.ext !== '.png' &&
+                        object.ext !== '.PNG' &&
+                        object.ext !== '.jpg' &&
+                        object.ext !== '.jpeg'
                     "
                     style="margin-right: 10px; margin-left: 10px; color: #007bff; margin-top: -5px;"
                     width="16"
@@ -221,10 +220,10 @@
                     xmlns="http://www.w3.org/2000/svg"
                     style="color: #75b5aa; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                     v-if="
-                      object.fileExt == '.png' ||
-                        object.fileExt == '.PNG' ||
-                        object.fileExt == '.jpg' ||
-                        object.fileExt == 'jpeg'
+                      object.ext == '.png' ||
+                        object.ext == '.PNG' ||
+                        object.ext == '.jpg' ||
+                        object.ext == 'jpeg'
                     "
                     width="16"
                     height="16"
@@ -241,7 +240,7 @@
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     style="color: #295394; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
-                    v-if="object.fileExt == '.docx'"
+                    v-if="object.ext == '.docx'"
                     width="16"
                     height="16"
                     fill="currentColor"
@@ -257,7 +256,7 @@
                     xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink"
                     fill="#be2e31"
-                    v-if="object.fileExt == '.pdf'"
+                    v-if="object.ext == '.pdf'"
                     style="margin-right: 10px; margin-left: 10px;"
                     aria-hidden="true"
                     version="1.1"
@@ -284,12 +283,12 @@
                     xmlns="http://www.w3.org/2000/svg"
                     style="color: #d28445; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                     v-if="
-                      object.fileExt == '.mp4' ||
-                        object.fileExt == '.webm' ||
-                        object.fileExt == '.mpeg' ||
-                        object.fileExt == '.wmv' ||
-                        object.fileExt == '.mov' ||
-                        object.fileExt == '.avi'
+                      object.ext == '.mp4' ||
+                        object.ext == '.webm' ||
+                        object.ext == '.mpeg' ||
+                        object.ext == '.wmv' ||
+                        object.ext == '.mov' ||
+                        object.ext == '.avi'
                     "
                     width="16"
                     height="16"
@@ -306,7 +305,7 @@
                   </svg>
 
                   <svg
-                    v-if="object.fileExt == '.zip' || object.fileExt == '.7z'"
+                    v-if="object.ext == '.zip' || object.ext == '.7z'"
                     style="color: #c09c0c; margin-right: 10px; margin-left: 10px; margin-top: -5px;"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -400,20 +399,6 @@ export default {
       this.objects = await _explorerService.list(path);
     },
 
-    // Lists the contents of a selected main directory
-    selectSwitch: async function(path) {
-      $(".table tr").each(function(a, b) {
-        $(b).click(function() {
-          $(".table tr").css("background", "#ffffff");
-          $(this).css("background", "#f9fbfc");
-        });
-      });
-
-      $(".tblFiles input:checkbox").prop("checked", false);
-      this.selectedObjects = [];
-      this.path = path;
-      await this.updateTable(this.path);
-    },
 
     async toggleObject(path) {
       var selected = this.selectedObjects;
