@@ -1,11 +1,10 @@
 import axios from "axios";
-import $ from 'jquery';
 import config from "../config.json";
 import FileDownload from "js-file-download";
+import FileHelper from "../assets/helpers/FileHelper";
 
 class ActionService {
-
- upload = async function(files) {
+  upload = async function(files) {
     return axios
       .post(`${config.baseUrl}upload`, {
         files: files,
@@ -18,14 +17,20 @@ class ActionService {
       });
   };
 
-  downloadSingle = async function(pickedFile) {
-    var get = pickedFile;
+  downloadSingle = async function(object) {
+    var _fileHelper = new FileHelper();
     axios
       .get(`${config.baseUrl}download`, {
+        params: {
+          object,
+        },
         responseType: "blob",
       })
       .then((response) => {
-        FileDownload(response.data, get);
+        FileDownload(
+          response.data,
+          _fileHelper.getObjectNameFromPath(object)
+        );
       })
       .catch((err) => {
         console.error(err);
@@ -39,7 +44,6 @@ class ActionService {
       })
       .then((response) => {
         FileDownload(response.data, new Date().toLocaleString() + ".zip");
-        $("#fileTable input:checkbox").prop("checked", false);
       })
       .catch((err) => {
         console.error(err);

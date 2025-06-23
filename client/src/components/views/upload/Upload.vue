@@ -14,7 +14,7 @@
       multiple
       class="hidden-input"
     />
-    
+
     <div class="upload-content">
       <p v-if="!files.length && !uploading">
         Drag & Drop or Click to Upload
@@ -23,124 +23,129 @@
         <li v-for="(file, index) in files" :key="index">
           <div class="file-info">
             <span>{{ file.name }} ({{ formatSize(file.size) }})</span>
-            <div v-if="uploadProgress[index] !== undefined" class="progress-container">
-              <div 
-                class="progress-bar" 
+            <div
+              v-if="uploadProgress[index] !== undefined"
+              class="progress-container"
+            >
+              <div
+                class="progress-bar"
                 :style="{ width: uploadProgress[index] + '%' }"
               ></div>
               <span class="progress-text">{{ uploadProgress[index] }}%</span>
             </div>
           </div>
-          <button 
-            v-if="!uploading" 
-            @click="removeFile(index)" 
+          <button
+            v-if="!uploading"
+            @click="removeFile(index)"
             class="remove-btn"
-          >×</button>
+          >
+            ×
+          </button>
         </li>
       </ul>
     </div>
-    
+
     <p v-if="uploading">Uploading... {{ totalProgress }}%</p>
   </div>
 </template>
 
 <script>
 import config from "../../../config.json";
-import axios from 'axios'
+import axios from "axios";
 
 export default {
-  name: 'FileUpload',
-  
+  name: "FileUpload",
+
   data() {
     return {
       files: [],
       isDragging: false,
       uploading: false,
-      uploadProgress: {}
-    }
+      uploadProgress: {},
+    };
   },
-  
+
   computed: {
     totalProgress() {
-      const progresses = Object.values(this.uploadProgress)
-      return progresses.length 
+      const progresses = Object.values(this.uploadProgress);
+      return progresses.length
         ? Math.round(progresses.reduce((a, b) => a + b) / progresses.length)
-        : 0
-    }
+        : 0;
+    },
   },
-  
+
   methods: {
     onDragOver() {
-      this.isDragging = true
+      this.isDragging = true;
     },
-    
+
     onDragLeave() {
-      this.isDragging = false
+      this.isDragging = false;
     },
-    
+
     onDrop(event) {
-      this.isDragging = false
-      const droppedFiles = Array.from(event.dataTransfer.files)
-      this.files = [...this.files, ...droppedFiles]
-      this.uploadFiles()
+      this.isDragging = false;
+      const droppedFiles = Array.from(event.dataTransfer.files);
+      this.files = [...this.files, ...droppedFiles];
+      this.uploadFiles();
     },
-    
+
     triggerFileInput() {
-      this.$refs.fileInput.click()
+      this.$refs.fileInput.click();
     },
-    
+
     onFileChange(event) {
-      const selectedFiles = Array.from(event.target.files)
-      this.files = [...this.files, ...selectedFiles]
-      event.target.value = ''
-      this.uploadFiles()
+      const selectedFiles = Array.from(event.target.files);
+      this.files = [...this.files, ...selectedFiles];
+      event.target.value = "";
+      this.uploadFiles();
     },
-    
+
     removeFile(index) {
-      this.files.splice(index, 1)
+      this.files.splice(index, 1);
     },
-    
+
     formatSize(bytes) {
-      if (bytes === 0) return '0 Bytes'
-      const k = 1024
-      const sizes = ['Bytes', 'KB', 'MB', 'GB']
-      const i = Math.floor(Math.log(bytes) / Math.log(k))
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+      if (bytes === 0) return "0 Bytes";
+      const k = 1024;
+      const sizes = ["Bytes", "KB", "MB", "GB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
     },
-    
+
     async uploadFiles() {
-      if (!this.files.length || this.uploading) return
-      
-      this.uploading = true
-      this.uploadProgress = {}
-      
+      if (!this.files.length || this.uploading) return;
+
+      this.uploading = true;
+      this.uploadProgress = {};
+
       const uploadPromises = this.files.map((file, index) => {
-        const formData = new FormData()
-        formData.append('file', file)
-        
+        const formData = new FormData();
+        formData.append("file", file);
+
         return axios.post(`${config.baseUrl}upload`, formData, {
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total
-            )
-			this.$emit('refresh')
+            );
+            this.$emit("refresh");
             this.$set(this.uploadProgress, index, percentCompleted)
-          }
-        })
-      })
-      
+          },
+        });
+      });
+
       try {
-        await Promise.all(uploadPromises)
-        this.files = []
-        this.uploadProgress = {}
+        await Promise.all(uploadPromises);
+        this.files = [];
+        this.uploadProgress = {};
       } catch (error) {
-        console.error('Upload failed:', error)
+        console.error("Upload failed:", error);
       } finally {
-        this.uploading = false
+        this.uploading = false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

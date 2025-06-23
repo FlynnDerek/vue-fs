@@ -40,7 +40,11 @@
       </div>
 
       <div class="actionBtn">
-        <el-button :disabled="selectedObjects.length !== 1" color="#3a5582" @click="extract()">
+        <el-button
+          :disabled="selectedObjects.length !== 1"
+          color="#3a5582"
+          @click="extract()"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             style="margin-right: 7px;"
@@ -61,28 +65,6 @@
       </div>
 
       <div class="actionBtn">
-        <el-button class="actionBtn" color="#835be3" @click="viewFile()">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            style="margin-right: 10px;"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-eye"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
-            />
-            <path
-              d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
-            />
-          </svg>
-          View File</el-button
-        >
-      </div>
-
-      <div class="actionBtn">
         <MoveModal
           :selectedObjects="selectedObjects"
           :objects="objects"
@@ -98,25 +80,27 @@
       </div>
     </el-row>
 
-	<el-row>
-		<Upload class="upload" @refresh="updateOnFileUpload()" />
-	</el-row>
+    <el-row>
+      <Upload class="upload" @refresh="updateOnFileUpload()" />
+    </el-row>
 
     <el-row>
       <el-col :span="24" class="tblFiles">
         <table>
           <tbody>
             <tr
-              class="entries"
               v-for="object in objects"
               :key="object.name"
-              @click="setPath(object.path, object.name, object.isDir)"
+              @click="setPath(object.path, object.isDir)"
             >
               <div class="explorerSpan2" v-if="object.isDir == true">
                 <input
                   class="checkbox"
                   type="checkbox"
-                  @click.stop="toggleObject(object.path)"
+                  :id="object.name"
+                  :value="object.path"
+                  v-model="selectedObjects"
+                  @click.stop
                 />
 
                 <svg
@@ -155,19 +139,19 @@
                 >
               </div>
             </tr>
-
             <tr
-              class="entries"
               v-for="object in objects"
-              :key="object.name"
-              v-on:click="setPath(object.path, object.name, object.isDir)"
+              :key="object.path"
+              v-on:click="setPath(object.path, object.isDir)"
             >
-              <div class="explorerSpan2" v-if="object.isDir == false">
-                <label class="tblSpanLabel">
+              <label class="tblSpanLabel">
+                <div class="explorerSpan2" v-if="object.isDir == false">
                   <input
                     class="checkbox"
                     type="checkbox"
-                    @click="toggleObject(object.path)"
+                    :id="object.name"
+                    :value="object.path"
+                    v-model="selectedObjects"
                   />
 
                   <svg
@@ -326,28 +310,27 @@
                   <span class="tblRowDateTime"
                     ><i>{{ object.timestamp }}</i></span
                   >
-                </label>
-              </div>
+                </div>
+              </label>
             </tr>
           </tbody>
         </table>
       </el-col>
     </el-row>
 
-	<p>path: {{path}}</p>
-	<p>selected: {{selectedObjects}}</p>
+    <p>path: {{ path }}</p>
+    <p>selected: {{ selectedObjects }}</p>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
 import Breadcrumbs from "./views/breadcrumbs/Breadcrumbs.vue";
-import Upload from "./views/upload/Upload.vue"
+import Upload from "./views/upload/Upload.vue";
 import DeleteModal from "./views/modals/DeleteModal.vue";
 import MoveModal from "./views/modals/MoveModal.vue";
 import NewFolderModal from "./views/modals/NewFolderModal.vue";
 import config from "../config.json";
-import $ from "jquery";
 
 import ActionService from "../services/ActionService";
 import ExplorerService from "../services/ExplorerService";
@@ -360,7 +343,7 @@ var _fileHelper = new FileHelper();
 export default {
   components: {
     Breadcrumbs,
-	Upload,
+    Upload,
     DeleteModal,
     MoveModal,
     NewFolderModal,
@@ -368,17 +351,15 @@ export default {
   data() {
     return {
       baseConfig: config,
-      objects: [],
       path: "./root",
-      pickedFile: "./root/none.txt",
-      fileSize: [],
-      filterText: "",
+      objects: [],
       selectedObjects: [],
+      filterText: "",
     };
   },
 
   async mounted() {
-    await this.updateTable("./root")
+    await this.updateTable("./root");
   },
   methods: {
     async newFolder(params) {
@@ -399,22 +380,7 @@ export default {
       this.objects = await _explorerService.list(path);
     },
 
-
-    async toggleObject(path) {
-      var selected = this.selectedObjects;
-
-	  console.log(this.selectedObjects)
-
-      if (selected.includes(path)) {
-        selected.splice(selected.indexOf(path), 1);
-      } else {
-        selected.push(path);
-      }
-    },
-
-    async setPath(path, fileName, isDir) {
-      this.pickedFile = fileName;
-
+    async setPath(path, isDir) {
       if (isDir) {
         this.path = path;
         await this.updateTable(this.path);
@@ -427,25 +393,11 @@ export default {
 
     clearSelects() {
       this.selectedObjects = [];
-      $(".tblFiles input:checkbox").prop("checked", false);
-    },
-
-    // Moves the user back a level
-    async prevDir() {
-      if (this.path == "./root") {
-        console.log("You're in the root directory");
-      } else if (this.path == "./root") {
-        console.log("You're in the root directory");
-      } else {
-        this.path = this.path.substr(0, this.path.lastIndexOf("/"));
-        await this.updateTable(this.path);
-      }
     },
 
     async deleteSelections() {
       await _actionService.delete(this.selectedObjects).then(async () => {
         this.selectedObjects = [];
-        $(".tblFiles input:checkbox").prop("checked", false);
         await this.updateTable(this.path);
       });
     },
@@ -455,20 +407,18 @@ export default {
         this.selectedObjects.length == 1 &&
         _fileHelper.isAFile(this.selectedObjects.toString())
       ) {
-        _actionService.downloadSingle(this.pickedFile);
+        _actionService.downloadSingle(this.selectedObjects[0]);
       } else {
         _actionService.downloadMultiple();
       }
     },
 
     async extract() {
-      await _actionService.extract(this.selectedObjects[0])
-	  .then(async () => {
+      await _actionService.extract(this.selectedObjects[0]).then(async () => {
         await this.updateTable(this.path);
       });
 
       this.selectedObjects = [];
-      $(".tblFiles input:checkbox").prop("checked", false);
     },
 
     async move(destinationPath) {
@@ -476,7 +426,6 @@ export default {
         .move(this.selectedObjects, destinationPath)
         .then(async () => {
           this.selectedObjects = [];
-          $(".tblFiles input:checkbox").prop("checked", false);
           await this.updateTable(destinationPath);
         });
     },
@@ -538,10 +487,6 @@ export default {
 
 .actionBtn {
   margin: 0px 0px 0px 5px;
-}
-
-.upload {
-
 }
 
 .explorerSpan {
@@ -639,15 +584,6 @@ thead th {
   float: right;
   font-family: "consolas";
   font-size: 14px;
-}
-
-.entries {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none;
 }
 
 @media (min-width: 768px) {

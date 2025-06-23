@@ -84,15 +84,14 @@ router.post("/newFolder", (req, res) => {
 
 // Download a file
 router.get("/download", (req, res) => {
-  
+  const object = req.query.object;
   Logger.Event(`Download: ${currentPath}`);
-  const file = path.join(cwd(), selectedPath.substring(1));
-  res.sendFile(file);
+  const objectPath = path.join(cwd(), object);
+  res.sendFile(objectPath);
 });
 
 // View a file
 router.get("/view", (req, res) => {
-	console.log(res.data)
   res.sendFile(currentPath, { root: cwd() });
 });
 
