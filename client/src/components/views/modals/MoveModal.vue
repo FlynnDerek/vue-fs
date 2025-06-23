@@ -46,13 +46,13 @@
             <tbody>
               <tr
                 class="entries trDirectories"
-                v-for="object in moveObjects"
-                :key="object.name"
-                v-on:click="sendMoveActionPaths(object.path)"
+                v-for="option in destinationOptions"
+                :key="option.path"
+                v-on:click="sendMoveActionPaths(option.path)"
               >
-                <div class="explorerSpan" v-if="object.isDir == true">
+                <div class="explorerSpan" v-if="option.isDir == true">
                   <svg
-                    v-if="object.isDir == true"
+                    v-if="option.isDir == true"
                     xmlns="http://www.w3.org/2000/svg"
                     style="margin-right: 10px; margin-left: 10px;"
                     width="16"
@@ -65,7 +65,7 @@
                       d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"
                     />
                   </svg>
-                  <span class="fileName">{{ object.name }}</span>
+                  <span class="fileName">{{ option.name }}</span>
                 </div>
               </tr>
             </tbody>
@@ -73,8 +73,11 @@
         </div>
       </el-row>
 
-      <span class="chipMoveLabel">Destination: </span>
-      <span class="chipMoveDest">{{ destinationPath }}</span>
+      <span class="destinationLabel">Destination </span>
+      <br />
+      <div class="destinationPath">
+        <span class="destinationPathText">{{ destinationPath }}</span>
+      </div>
 
       <template #footer>
         <el-button
@@ -107,21 +110,21 @@ export default {
     return {
       destinationPath: "./root",
       dialogVisible: false,
-      moveObjects: [],
+      destinationOptions: [],
       folderName: "",
     };
   },
   async mounted() {
-    this.moveObjects = this.objects;
+    this.sendMoveActionPaths(this.destinationPath);
   },
   methods: {
     sendMoveActionPaths: async function(destinationPath) {
+      this.destinationOptions = await _explorerService.list(destinationPath);
       this.destinationPath = destinationPath;
-      this.moveObjects = await _explorerService.list(destinationPath);
     },
 
     async setMoveBreadcrumbs(path) {
-      this.moveObjects = await _explorerService.list(path);
+      this.destinationOptions = await _explorerService.list(path);
       this.destinationPath = path;
     },
 
@@ -164,18 +167,21 @@ export default {
   min-height: 175px;
 }
 
-.chipMoveDest {
+.destinationPathText {
   font-family: "consolas";
-  background-color: #fdf6ec;
-  color: #e6a23d;
-  border: 1px solid #e6a23d;
   padding: 5px;
-  border-radius: 5px;
 }
 
-.chipMoveLabel {
+.destinationLabel {
   margin: 0px 5px 0px 0px;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 14px;
+}
+
+.destinationPath {
+  margin: 5px 0px 0px 0px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #e6a23d;
 }
 </style>

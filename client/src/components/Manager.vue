@@ -426,7 +426,10 @@ export default {
         .move(this.selectedObjects, destinationPath)
         .then(async () => {
           this.selectedObjects = [];
-          await this.updateTable(destinationPath);
+		  this.path = destinationPath;
+		  setTimeout(() => {
+			this.updateTable(destinationPath);
+		  }, 500) // temp fix: allow mv ops to complete on server-side
         });
     },
 
