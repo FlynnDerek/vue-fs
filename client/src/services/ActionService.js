@@ -27,19 +27,19 @@ class ActionService {
         responseType: "blob",
       })
       .then((response) => {
-        FileDownload(
-          response.data,
-          _fileHelper.getObjectNameFromPath(object)
-        );
+        FileDownload(response.data, _fileHelper.getObjectNameFromPath(object));
       })
       .catch((err) => {
         console.error(err);
       });
   };
 
-  downloadMultiple = async function() {
+  downloadMultiple = async function(objects) {
     axios
       .get(`${config.baseUrl}zip`, {
+        params: {
+          objects,
+        },
         responseType: "blob",
       })
       .then((response) => {

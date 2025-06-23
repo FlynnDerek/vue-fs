@@ -409,7 +409,7 @@ export default {
       ) {
         _actionService.downloadSingle(this.selectedObjects[0]);
       } else {
-        _actionService.downloadMultiple();
+        _actionService.downloadMultiple(this.selectedObjects);
       }
     },
 
@@ -584,20 +584,5 @@ thead th {
   float: right;
   font-family: "consolas";
   font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  #sidebar-wrapper {
-    margin-left: 0;
-  }
-
-  #page-content-wrapper {
-    min-width: 0;
-    width: 100%;
-  }
-
-  #wrapper.toggled #sidebar-wrapper {
-    margin-left: -15rem;
-  }
 }
 </style>

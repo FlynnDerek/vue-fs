@@ -26,9 +26,9 @@ router.get("/list", (req, res) => {
 	if (!Path.isDir(dirPath)) globalDir = path.parse(dirPath).dir;
 	else globalDir = dirPath;
   
-	fs.readdir(globalDir, (err, filesPath) => {
+	fs.readdir(globalDir, (err, objectPaths) => {
 	  if (err) throw err;
-	  result = filesPath.map((object) => {
+	  result = objectPaths.map((object) => {
 		return {
 		  path: `${globalDir}/${object}`,
 		  name: object,
@@ -132,7 +132,7 @@ router.post("/movefile", (req, res) => {
 
 // Zip selected files and directories
 router.get("/zip", (req, res) => {
-  const files = filesToZip;
+  const objects = req.query.objects;
   const archive = archiver("zip");
 
   archive.on("error", (err) => {
@@ -146,11 +146,11 @@ router.get("/zip", (req, res) => {
   res.attachment("archive-name.zip");
   archive.pipe(res);
 
-  for (const i in files) {
-    archive.file(files[i], { name: path.basename(files[i]) });
+  for (const i in objects) {
+    archive.file(objects[i], { name: path.basename(objects[i]) });
 
-    if (Path.isDir(files[i])) {
-      archive.directory(files[i], path.basename(files[i]));
+    if (Path.isDir(objects[i])) {
+      archive.directory(objects[i], path.basename(objects[i]));
     }
   }
   archive.finalize();
