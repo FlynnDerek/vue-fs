@@ -151,7 +151,7 @@ export default {
 <style scoped>
 .drop-zone {
   width: 100%;
-  min-height: 150px;
+  height: 90px;
   border: 1.5px solid #dcdee3;
   border-radius: 5px;
   text-align: center;
@@ -169,7 +169,7 @@ export default {
 }
 
 .upload-content {
-  min-height: 150px;
+  min-height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
