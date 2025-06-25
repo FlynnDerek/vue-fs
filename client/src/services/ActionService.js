@@ -63,35 +63,11 @@ class ActionService {
       });
   };
 
-  sendToZip = async function(filesToSend) {
-    return axios
-      .post(`${config.baseUrl}sendZips`, {
-        sentZip: filesToSend,
-      })
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
-
   newFolder = async function(currentPath, folderName) {
     return axios
       .post(`${config.baseUrl}newFolder`, {
         currentPath,
         folderName,
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
-
-  viewFile = async function() {
-    return axios
-      .get(`${config.baseUrl}view`, {})
-      .then(() => {
-        window.open(`${config.baseUrl}view`);
       })
       .catch((err) => {
         console.error(err);

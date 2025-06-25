@@ -98,6 +98,7 @@
 <script>
 import ExplorerService from "../../../services/ExplorerService";
 import Breadcrumbs from "../breadcrumbs/Breadcrumbs.vue";
+import config from "../../../config.json";
 
 var _explorerService = new ExplorerService();
 
@@ -108,13 +109,15 @@ export default {
   },
   data() {
     return {
-      destinationPath: "./root",
+      baseConfig: config,
+      destinationPath: "",
       dialogVisible: false,
       destinationOptions: [],
       folderName: "",
     };
   },
   async mounted() {
+    this.destinationPath = this.baseConfig.baseDirectory;
     this.sendMoveActionPaths(this.destinationPath);
   },
   methods: {
@@ -133,7 +136,8 @@ export default {
     },
 
     cancel() {
-      this.destinationPath = "./root";
+      this.destinationPath = this.baseConfig.baseDirectory;
+      this.setMoveBreadcrumbs(this.baseConfig.baseDirectory);
     },
   },
 };

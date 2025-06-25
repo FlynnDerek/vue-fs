@@ -375,7 +375,7 @@ export default {
   data() {
     return {
       baseConfig: config,
-      path: "./root",
+      path: "",
       objects: [],
       selectedObjects: [],
       filterText: "",
@@ -383,7 +383,8 @@ export default {
   },
 
   async mounted() {
-    await this.updateTable("./root");
+	this.path = this.baseConfig.baseDirectory;
+    await this.updateTable(this.baseConfig.baseDirectory);
   },
   methods: {
     async newFolder(params) {
@@ -409,10 +410,6 @@ export default {
         this.path = path;
         await this.updateTable(this.path);
       }
-    },
-
-    async viewFile() {
-      await _actionService.viewFile();
     },
 
     clearSelects() {
